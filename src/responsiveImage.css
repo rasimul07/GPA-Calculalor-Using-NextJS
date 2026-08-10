@@ -1,0 +1,10 @@
+@media only screen and (max-width: 500px) {
+    .resposive_image{
+        width: 400px;
+    }
+}
+@media (min-width: 500px) {
+    .resposive_image{
+        width: 600px;
+    }
+}
