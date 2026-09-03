@@ -1,18 +1,16 @@
 'use client';
 import React, { useState } from "react";
-import { Button, Grid, Typography, Stack, TextField, Card } from "@mui/material";
+import { Button, Grid, Typography, Stack, Card } from "@mui/material";
 import { Box } from "@mui/material";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { Mauntain_Mist, Birch, Corn, Cafe_Royale } from "../Colors";
+import { Mauntain_Mist, Corn, Cafe_Royale } from "../Colors";
 import myImage from '../images/credit-details.png';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from '@mui/material/DialogContent';
 import "../responsiveImage.css";
+import { AppTextField, AppSelect } from "./common";
 
 const FindPercentage = () => {
   const [formType, setFormType] = useState(1);
@@ -44,9 +42,7 @@ const FindPercentage = () => {
             md={5}
           >
             <Box>
-              <Box
-                borderRadius={3}
-                sx={{ background: "rgba(255, 255, 255, 0.95)", p: 3, boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.3)", margin: 1 }}>
+              <Box className="form-card" sx={{ margin: 1 }}>
                 <Stack spacing={1.5}>
                   <Typography textAlign={"center"} fontWeight={"bold"} color={Mauntain_Mist}>
                     PLEASE SELECT A METHOD FROM BELOW
@@ -85,9 +81,7 @@ const FindPercentage = () => {
             </Box>
           </Grid>
           <Grid item xs={12} md={7}>
-            <Box
-              borderRadius={3}
-              sx={{ padding: "2rem", margin: "0.5rem", background: "rgba(255, 255, 255, 0.95)", boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.3)" }}>
+            <Box className="form-card" sx={{ padding: "2rem", margin: "0.5rem" }}>
               <CustomForm formType={formType}></CustomForm>
             </Box>
           </Grid>
@@ -204,31 +198,7 @@ const CreditPointToPercentage = () => {
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={6}>
-                  <TextField
-                    variant="outlined"
-                    fullWidth
-                    required
-                    label={`Obtained credit`}
-                    onChange={(e) =>
-                      handleCreditValues(index * 2, e.target.value)
-                    }
-                    onFocus={() => isVisitedHandler(index * 2)}
-                    value={creditValues[index * 2] || ""}
-                    error={
-                      (creditValues[index * 2] === "" && isVisited[index * 2])
-                    }
-                    helperText={
-                      (creditValues[index * 2] === "" && isVisited[index * 2])
-                        ? "Required field"
-                        : "Enter obtained credit points"
-                    }
-                    type="number"
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    variant="outlined"
-                    fullWidth
+                  <AppTextField
                     required
                     label={`Full credit Point`}
                     type="number"
@@ -245,6 +215,26 @@ const CreditPointToPercentage = () => {
                         ? "Required field"
                         : "Enter Full credit points"
                     }
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <AppTextField
+                    required
+                    label={`Obtained credit`}
+                    onChange={(e) =>
+                      handleCreditValues(index * 2, e.target.value)
+                    }
+                    onFocus={() => isVisitedHandler(index * 2)}
+                    value={creditValues[index * 2] || ""}
+                    error={
+                      (creditValues[index * 2] === "" && isVisited[index * 2])
+                    }
+                    helperText={
+                      (creditValues[index * 2] === "" && isVisited[index * 2])
+                        ? "Required field"
+                        : "Enter obtained credit points"
+                    }
+                    type="number"
                   />
                 </Grid>
               </Grid>
@@ -335,9 +325,7 @@ const SgpaToPercentage = () => {
         <Grid container spacing={2}>
           {arrayOfSems.map((item, index) => (
             <Grid key={item} item xs={6} md={6}>
-              <TextField
-                variant="outlined"
-                fullWidth
+              <AppTextField
                 required
                 label={`Sem ${item}`}
                 value={semValues[index] || ""}
@@ -354,7 +342,7 @@ const SgpaToPercentage = () => {
                 type="number"
                 onChange={(e) =>
                   handleValueChange(index, e.target.value)
-                }></TextField>
+                } />
             </Grid>
           ))}
         </Grid>
@@ -369,24 +357,23 @@ const SgpaToPercentage = () => {
 
 const CustomFormControl = ({ numOfSemester, handleChange }) => {
   return (
-    <FormControl fullWidth sx={{ mb: 3 }} size="small">
-      <InputLabel id="select-no-of-sems-label">No of sems</InputLabel>
-      <Select
-        labelId="select-no-of-sems-label"
-        value={numOfSemester}
-        label="No of sems"
-        onChange={handleChange}>
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
-          <MenuItem key={n} value={n}>{n}</MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <AppSelect
+      label="No of sems"
+      labelId="select-no-of-sems-label"
+      value={numOfSemester}
+      onChange={handleChange}
+      sx={{ mb: 3 }}
+    >
+      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
+        <MenuItem key={n} value={n}>{n}</MenuItem>
+      ))}
+    </AppSelect>
   );
 };
 
 const FindPercentageButton = ({ handleSubmit }) => {
   return (
-    <Button variant="contained" sx={{ mt: 3 }} style={{ backgroundColor: Cafe_Royale }} onClick={handleSubmit}>
+    <Button variant="contained" size="large" sx={{ mt: 3 }} onClick={handleSubmit}>
       Calculate Percentage
     </Button>
   );
@@ -396,7 +383,7 @@ const ShowPercentage = ({ formSubmitted, percentage }) => {
   return (
     <Box>
       {(formSubmitted) ? <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-        <Card sx={{ p: 2, backgroundColor: Corn, minWidth: 200, textAlign: 'center' }}>
+        <Card className="result-card" sx={{ minWidth: 200 }}>
           <Typography fontWeight={'bold'} color={'white'}>
             Your Percentage is: {percentage}%
           </Typography>
@@ -405,13 +392,38 @@ const ShowPercentage = ({ formSubmitted, percentage }) => {
   );
 };
 
-const DialogBox = () => {
+const DialogBox = ({ inline = false }) => {
   const [open, setOpen] = useState(false);
+
+  const triggerButton = (
+    <Button
+      onClick={() => setOpen(true)}
+      variant="outlined"
+      sx={{
+        color: '#423726',
+        borderColor: '#C4B5A0',
+        whiteSpace: 'nowrap',
+        '&:hover': {
+          borderColor: '#754B0F',
+          backgroundColor: 'rgba(117, 75, 15, 0.04)',
+        },
+      }}
+    >
+      Where do I find Credit points?
+    </Button>
+  );
+
   return (
-    <Box mt={2}>
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Button onClick={() => { setOpen(true) }} variant="outlined" sx={{ color: 'black', borderColor: 'white' }}>Where do I find Credit points?</Button>
-      </Box>
+    <>
+      {inline ? (
+        triggerButton
+      ) : (
+        <Box sx={{ mt: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            {triggerButton}
+          </Box>
+        </Box>
+      )}
       <Dialog onClose={() => { setOpen(false) }} open={open} maxWidth={'md'}>
         <DialogTitle sx={{ fontSize: { xs: '1rem', md: '1.2rem' } }}>Result of a semester that helps you find full and obtained credit</DialogTitle>
         <DialogContent>
@@ -423,7 +435,7 @@ const DialogBox = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </>
   );
 };
 

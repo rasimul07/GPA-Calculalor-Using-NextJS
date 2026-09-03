@@ -1,15 +1,108 @@
 /*!***********************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[3]!./src/index.css ***!
   \***********************************************************************************************************************************************************************************************************************************************************/
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;&display=swap');
-body{
-  margin: 0px;
-  padding: 0px;
-  font-family: 'Poppins',sans-serif;
-  overflow: hidden;
-  max-width: '1400px';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
 }
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #FDFBF7;
+  color: #423726;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar for form areas */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F1EB;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C4B5A0;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9A6B2E;
+}
+
+/* Remove number input spinners for cleaner look */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
 /*!*********************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[3]!./src/App.css ***!
   \*********************************************************************************************************************************************************************************************************************************************************/
+.form-card {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(66, 55, 38, 0.15);
+}
+
+.form-section-title {
+  font-weight: 600;
+  color: #9F9CA4;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.auth-dialog-card {
+  background: rgba(255, 255, 255, 0.98) !important;
+  -webkit-backdrop-filter: blur(12px);
+          backdrop-filter: blur(12px);
+  border: 1px solid rgba(224, 216, 204, 0.6);
+}
+
+.semester-input-block {
+  background: #F5F1EB;
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #E0D8CC;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.semester-input-block:hover {
+  border-color: #C4B5A0;
+  box-shadow: 0 2px 8px rgba(117, 75, 15, 0.06);
+}
+
+.result-card {
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #E5AF05 0%, #D4A004 100%);
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(229, 175, 5, 0.3);
+}
+
+.custom-button.MuiButton-contained {
+  background: linear-gradient(135deg, #754B0F 0%, #9A6B2E 100%) !important;
+}
+
+.custom-button.MuiButton-outlined {
+  border-color: #754B0F !important;
+  color: #754B0F !important;
+}
 

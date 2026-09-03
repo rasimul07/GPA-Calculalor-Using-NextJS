@@ -1,16 +1,14 @@
 'use client';
 import React, { useState } from "react";
-import { Button, Grid, Typography, TextField, Card, Divider } from "@mui/material";
+import { Button, Grid, Typography, Card, Divider, Stack } from "@mui/material";
 import { Box } from "@mui/material";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { Mauntain_Mist, Birch, Corn, Cafe_Royale } from "../Colors";
+import { Mauntain_Mist, Corn, Cafe_Royale } from "../Colors";
 import { DialogBox } from "./FindPercentage";
 import "../index.css";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
+import { AppTextField, AppSelect } from "./common";
 
 const FindYgpa = ({ email, setEmail }) => {
     const [userInfo, setUserInfo] = useState({});
@@ -135,42 +133,45 @@ const FindYgpa = ({ email, setEmail }) => {
                     Find YGPA
                 </Typography>
 
-                <Box
-                    borderRadius={3}
-                    sx={{
-                        padding: "2rem",
-                        background: "rgba(255, 255, 255, 0.95)",
-                        backdropFilter: 'blur(10px)',
-                        boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.3)",
-                        margin: "1.5rem auto",
-                        maxWidth: "800px"
-                    }}>
-                    <Grid container spacing={2} alignItems="center" justifyContent="center">
-                        <Grid item>
-                            <Button onClick={handleFetchData} variant="outlined" sx={{ color: 'black', borderColor: 'black' }}>Use Your Profile Data</Button>
-                        </Grid>
-                        <Grid item>
-                            <DialogBox></DialogBox>
-                        </Grid>
-                    </Grid>
+                <Box className="form-card" sx={{ margin: "1.5rem auto", maxWidth: "800px" }}>
+                    <Stack
+                        direction={{ xs: 'column', sm: 'row' }}
+                        spacing={2}
+                        alignItems="center"
+                        justifyContent="center"
+                    >
+                        <Button
+                            onClick={handleFetchData}
+                            variant="outlined"
+                            sx={{
+                                color: '#423726',
+                                borderColor: '#C4B5A0',
+                                whiteSpace: 'nowrap',
+                                '&:hover': {
+                                    borderColor: '#754B0F',
+                                    backgroundColor: 'rgba(117, 75, 15, 0.04)',
+                                },
+                            }}
+                        >
+                            Use Your Profile Data
+                        </Button>
+                        <DialogBox inline />
+                    </Stack>
                     <Divider sx={{ my: 2 }}></Divider>
                     <Box>
                         {isLogin ? (
                             <Box mb={2}>
                                 <Typography fontSize={'1.1rem'} fontWeight="500" mb={1}>Select year to calculate:</Typography>
-                                <FormControl fullWidth size="small">
-                                    <InputLabel id="year-select-label">Year</InputLabel>
-                                    <Select
-                                        labelId="year-select-label"
-                                        value={whichYear}
-                                        label="Year"
-                                        onChange={handleChange}
-                                    >
+                                <AppSelect
+                                    label="Year"
+                                    labelId="year-select-label"
+                                    value={whichYear}
+                                    onChange={handleChange}
+                                >
                                         {arrayOfYears.map((v) => (
                                             <MenuItem key={v} value={v}>Year {v}</MenuItem>
                                         ))}
-                                    </Select>
-                                </FormControl>
+                                </AppSelect>
                             </Box>
                         ) : null}
 
@@ -186,35 +187,11 @@ const FindYgpa = ({ email, setEmail }) => {
                                         padding={1}
                                         textTransform={"uppercase"}
                                         color={Mauntain_Mist}>
-                                        For semester {item}:
+                                        For semester {item%2 === 0? 'Even': 'Odd'}:
                                     </Typography>
                                     <Grid container spacing={2}>
                                         <Grid item xs={6}>
-                                            <TextField
-                                                variant="outlined"
-                                                fullWidth
-                                                required
-                                                label={`Obtained credit`}
-                                                onChange={(e) =>
-                                                    handleCreditValues(index * 2, e.target.value)
-                                                }
-                                                onFocus={() => isVisitedHandler(index * 2)}
-                                                value={creditValuesForYgpa[index * 2] || ""}
-                                                error={
-                                                    (creditValuesForYgpa[index * 2] === "" && isVisited[index * 2])
-                                                }
-                                                helperText={
-                                                    (creditValuesForYgpa[index * 2] === "" && isVisited[index * 2])
-                                                        ? "Required field"
-                                                        : "Obtained credit"
-                                                }
-                                                type="number"
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <TextField
-                                                variant="outlined"
-                                                fullWidth
+                                            <AppTextField
                                                 required
                                                 label={`Full credit Point`}
                                                 type="number"
@@ -233,6 +210,26 @@ const FindYgpa = ({ email, setEmail }) => {
                                                 }
                                             />
                                         </Grid>
+                                        <Grid item xs={6}>
+                                            <AppTextField
+                                                required
+                                                label={`Obtained credit`}
+                                                onChange={(e) =>
+                                                    handleCreditValues(index * 2, e.target.value)
+                                                }
+                                                onFocus={() => isVisitedHandler(index * 2)}
+                                                value={creditValuesForYgpa[index * 2] || ""}
+                                                error={
+                                                    (creditValuesForYgpa[index * 2] === "" && isVisited[index * 2])
+                                                }
+                                                helperText={
+                                                    (creditValuesForYgpa[index * 2] === "" && isVisited[index * 2])
+                                                        ? "Required field"
+                                                        : "Obtained credit"
+                                                }
+                                                type="number"
+                                            />
+                                        </Grid>
                                     </Grid>
                                 </Grid>
                             ))}
@@ -240,12 +237,12 @@ const FindYgpa = ({ email, setEmail }) => {
                     </Box>
 
                     <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Button variant="contained" size="large" style={{ backgroundColor: Cafe_Royale }} onClick={handleSubmit}>
+                        <Button variant="contained" size="large" onClick={handleSubmit}>
                             Calculate YGPA
                         </Button>
                         {formSubmitted ? (
                             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, width: '100%' }}>
-                                <Card sx={{ p: 2, backgroundColor: Corn, width: '100%', textAlign: 'center' }}>
+                                <Card className="result-card" sx={{ width: '100%' }}>
                                     <Typography fontWeight={'bold'} color={'white'}>
                                         Your YGPA is: {ygpa}
                                     </Typography>

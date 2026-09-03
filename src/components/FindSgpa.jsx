@@ -1,9 +1,10 @@
 'use client';
 import React, { useState } from "react";
-import { Button, Grid, Typography, TextField, Divider, Card } from "@mui/material";
+import { Button, Grid, Typography, Divider, Card } from "@mui/material";
 import { Box } from "@mui/material";
-import { Mauntain_Mist, Birch, Corn, Cafe_Royale } from "../Colors";
+import { Mauntain_Mist, Corn, Cafe_Royale } from "../Colors";
 import { DialogBox } from "./FindPercentage";
+import { AppTextField } from "./common";
 
 const FindSgpa = () => {
     const [sgpa, setSgpa] = useState(null);
@@ -68,15 +69,7 @@ const FindSgpa = () => {
 
                 <Grid container alignItems="center" justifyContent="center" sx={{ px: 2 }}>
                     <Grid item xs={12} md={6} lg={5}>
-                        <Box
-                            borderRadius={3}
-                            sx={{
-                                padding: "2rem",
-                                background: "rgba(255, 255, 255, 0.95)",
-                                backdropFilter: 'blur(10px)',
-                                boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.3)",
-                                margin: "1.5rem 0",
-                            }}>
+                        <Box className="form-card" sx={{ margin: "1.5rem 0" }}>
                             <DialogBox></DialogBox>
                             <Divider sx={{ my: '1.5rem' }}></Divider>
 
@@ -84,31 +77,7 @@ const FindSgpa = () => {
 
                             <Grid container spacing={2}>
                                 <Grid item xs={6}>
-                                    <TextField
-                                        variant="outlined"
-                                        fullWidth
-                                        required
-                                        label={`Obtained credit`}
-                                        onChange={(e) =>
-                                            handleCreditValues(0, e.target.value)
-                                        }
-                                        onFocus={() => isVisitedHandler(0)}
-                                        value={creditValuesForSgpa[0]}
-                                        error={
-                                            (creditValuesForSgpa[0] === "" && isVisited[0])
-                                        }
-                                        helperText={
-                                            (creditValuesForSgpa[0] === "" && isVisited[0])
-                                                ? "Required field"
-                                                : "Obtained credit"
-                                        }
-                                        type="number"
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        variant="outlined"
-                                        fullWidth
+                                    <AppTextField
                                         required
                                         label={`Full credit Point`}
                                         type="number"
@@ -127,12 +96,32 @@ const FindSgpa = () => {
                                         }
                                     />
                                 </Grid>
+                                <Grid item xs={6}>
+                                    <AppTextField
+                                        required
+                                        label={`Obtained credit`}
+                                        onChange={(e) =>
+                                            handleCreditValues(0, e.target.value)
+                                        }
+                                        onFocus={() => isVisitedHandler(0)}
+                                        value={creditValuesForSgpa[0]}
+                                        error={
+                                            (creditValuesForSgpa[0] === "" && isVisited[0])
+                                        }
+                                        helperText={
+                                            (creditValuesForSgpa[0] === "" && isVisited[0])
+                                                ? "Required field"
+                                                : "Obtained credit"
+                                        }
+                                        type="number"
+                                    />
+                                </Grid>
                             </Grid>
-                            <Button variant="contained" fullWidth sx={{ mt: 3, py: 1 }} style={{ backgroundColor: Cafe_Royale }} onClick={handleSubmit}>
+                            <Button variant="contained" fullWidth size="large" sx={{ mt: 3 }} onClick={handleSubmit}>
                                 Calculate SGPA
                             </Button>
                             {(formSubmitted) ? <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                                <Card sx={{ p: 2, backgroundColor: Corn, width: '100%', textAlign: 'center' }}>
+                                <Card className="result-card" sx={{ width: '100%' }}>
                                     <Typography fontWeight={'bold'} color={'white'}>
                                         Your SGPA is: {sgpa}
                                     </Typography>

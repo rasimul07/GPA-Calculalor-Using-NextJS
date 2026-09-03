@@ -1,33 +1,17 @@
 'use client';
-import React, { useState } from "react";
-import SignUp from "./SignUp";
+import React from "react";
 import {
-    Button,
-    Grid,
-    Typography,
-    Stack,
-    TextField,
-    Card,
-    CardActions,
     Divider,
     ListItemIcon,
     Avatar,
     Tooltip,
     IconButton,
+    MenuItem,
 } from "@mui/material";
 import { Box } from "@mui/material";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
 import Menu from '@mui/material/Menu';
 import Logout from '@mui/icons-material/Logout';
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { Mauntain_Mist, Birch, Corn, Cafe_Royale } from "../Colors";
 import "../index.css";
-import DialogTitle from "@mui/material/DialogTitle";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
 import { useRouter } from "next/navigation";
 
 const AccountMenu = ({ email }) => {

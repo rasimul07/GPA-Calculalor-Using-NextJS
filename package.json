@@ -16,6 +16,7 @@
     "@mui/material": "^5.14.13",
     "@mui/material-nextjs": "^5.18.0",
     "axios": "^1.5.1",
+    "formik": "^2.4.9",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.6.2",
     "next": "^14.2.15",

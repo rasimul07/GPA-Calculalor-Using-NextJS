@@ -1,4 +1,4 @@
-import FindDgpa from '@/src/components/FindDgpa';
+import FindDgpa from '@/src/components/DGPA/FindDgpa';
 
 export const metadata = {
   title: 'Find DGPA - MAKAUT GPA Calculator',

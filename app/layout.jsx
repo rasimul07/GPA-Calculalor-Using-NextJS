@@ -1,27 +1,14 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Appbar } from '@/src/components/Appbar';
 import axios from 'axios';
 import { BASE_URL } from '@/src/services/helper';
+import theme from '@/src/theme/theme';
 import '@/src/index.css';
 import '@/src/App.css';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#754B0F',
-    },
-    secondary: {
-      main: '#2196f3',
-    },
-  },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-  },
-});
 
 export default function RootLayout({ children }) {
   const [email, setEmail] = useState(null);

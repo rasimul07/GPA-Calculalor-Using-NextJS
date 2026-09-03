@@ -54,7 +54,7 @@ function Appbar({ email, setEmail }) {
   }, [setEmail]);
 
   return (
-    <div>
+    <div style={{ position: 'sticky', top: 0, zIndex: 1100, flexShrink: 0 }}>
       <MyAppbar email={email} setEmail={setEmail} pages={pages} setOpenSignIn={setOpenSignIn}></MyAppbar>
       <SignIn setEmail={setEmail} openSignIn={openSignIn} setOpenSignIn={setOpenSignIn} massage={massage} setMassage={setMassage} setSnackbarOpen={setSnackbarOpen}></SignIn>
       <Snackbar open={snackbarOpen} anchorOrigin={{ vertical: "top", horizontal: "right" }} autoHideDuration={2000} 

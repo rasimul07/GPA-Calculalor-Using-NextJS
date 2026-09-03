@@ -1,10 +1,10 @@
 {
   "pages": {
-    "/page": [
+    "/findYgpa/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/page.css",
-      "static/chunks/app/page.js"
+      "static/css/app/findYgpa/page.css",
+      "static/chunks/app/findYgpa/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -12,33 +12,34 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
+    "/findDgpa/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/findDgpa/page.css",
+      "static/chunks/app/findDgpa/page.js"
+    ],
     "/findSgpa/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/css/app/findSgpa/page.css",
       "static/chunks/app/findSgpa/page.js"
     ],
-    "/findYgpa/page": [
+    "/gpaEquator/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/findYgpa/page.css",
-      "static/chunks/app/findYgpa/page.js"
+      "static/chunks/app/gpaEquator/page.js"
+    ],
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/page.css",
+      "static/chunks/app/page.js"
     ],
     "/findPercentage/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/css/app/findPercentage/page.css",
       "static/chunks/app/findPercentage/page.js"
-    ],
-    "/gpaEquator/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/gpaEquator/page.js"
-    ],
-    "/findDgpa/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/findDgpa/page.js"
     ]
   }
 }

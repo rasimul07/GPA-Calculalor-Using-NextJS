@@ -1,8 +1,9 @@
 'use client';
 import React, { useState } from "react";
-import { Button, Grid, Typography, TextField, Checkbox, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Button, Grid, Typography, Checkbox, MenuItem } from "@mui/material";
 import { Box } from "@mui/material";
-import { Mauntain_Mist, Birch, Cafe_Royale } from "../Colors";
+import { Mauntain_Mist, Cafe_Royale } from "../Colors";
+import { AppTextField, AppSelect } from "./common";
 
 const GpaEquator = () => {
   const maxYears = 5;
@@ -265,21 +266,19 @@ const GpaEquator = () => {
                   paddingBottom={2}>
                   SELECT TOTAL YEARS OF YOUR DEGREE
                 </Typography>
-                <FormControl fullWidth size="small">
-                  <InputLabel id="select-no-of-years">Degree Years</InputLabel>
-                  <Select
-                    labelId="select-no-of-years"
-                    value={numOfYear}
-                    label="Degree Years"
-                    onChange={handleChange1}>
+                <AppSelect
+                  label="Degree Years"
+                  labelId="select-no-of-years"
+                  value={numOfYear}
+                  onChange={handleChange1}
+                >
                     {arrayOfMaxYears.map((v) => {
                       if (v > 1) {
                         return <MenuItem key={v} value={v}>{v} Years</MenuItem>;
                       }
                       return null;
                     })}
-                  </Select>
-                </FormControl>
+                </AppSelect>
               </Box>
             </Grid>
             <Grid
@@ -302,18 +301,16 @@ const GpaEquator = () => {
                   paddingBottom={2}>
                   SELECT NUMBER OF COMPLETED YEARS
                 </Typography>
-                <FormControl fullWidth size="small">
-                  <InputLabel id="select-passout-years">Completed Years</InputLabel>
-                  <Select
-                    labelId="select-passout-years"
-                    value={numOfPassoutYear}
-                    label="Completed Years"
-                    onChange={handleChange2}>
+                <AppSelect
+                  label="Completed Years"
+                  labelId="select-passout-years"
+                  value={numOfPassoutYear}
+                  onChange={handleChange2}
+                >
                     {maxArrayOfPassoutYears.map((v) => (
                       <MenuItem key={v} value={v}>{v} Year(s)</MenuItem>
                     ))}
-                  </Select>
-                </FormControl>
+                </AppSelect>
               </Box>
             </Grid>
           </Grid>
@@ -352,10 +349,8 @@ const GpaEquator = () => {
                 xs={12}
                 sm={4}
                 md={4}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  variant="outlined"
+                <AppTextField
+                  label="Target DGPA"
                   type="number"
                   placeholder="e.g. 8.5"
                   onChange={(e) => {
@@ -408,10 +403,7 @@ const GpaEquator = () => {
               spacing={2}>
               {arrayOfYear.map((item, index) => (
                 <Grid item key={item} xs={6} sm={4} md={3}>
-                  <TextField
-                    variant={"outlined"}
-                    size="small"
-                    fullWidth
+                  <AppTextField
                     label={`Year ${item}`}
                     value={yearValues[index] || ""}
                     required={passoutHandler(index)}
@@ -451,7 +443,6 @@ const GpaEquator = () => {
                 variant="contained"
                 fullWidth
                 size="large"
-                style={{ backgroundColor: Cafe_Royale }}
                 onClick={handleSubmit}>
                 Analyze Goal
               </Button>

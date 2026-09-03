@@ -1,13 +1,13 @@
-import { BrowserRouter as Router, Routes,Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-import {Appbar} from './components/Appbar'
+import { Appbar } from './components/Appbar'
 import ResponsiveDrawer from './components/ResponsiveDrawer'
 
 import FindYgpa from './components/FindYgpa'
-import {FindPercentage} from './components/FindPercentage'
+import { FindPercentage } from './components/FindPercentage'
 import GpaEquator from './components/GpaEquator'
 import FindSgpa from './components/FindSgpa'
-import FindDgpa from './components/FindDgpa'
+import FindDgpa from './components/DGPA/FindDgpa'
 import HomePage from './components/HomePage'
 import SignIn from './components/SignIn'
 import Profile from './components/Profile'
@@ -16,12 +16,11 @@ import { useState } from 'react'
 
 function App() {
   const [email, setEmail] = useState(null);
-  const [token,setToken] = useState(localStorage.getItem('token'));
   return (
     <div>
 
       <Router>
-      {/* <Appbar email={email} setEmail={setEmail}></Appbar> */}
+        {/* <Appbar email={email} setEmail={setEmail}></Appbar> */}
         <Routes>
           {/* <Route path={'/appbar'} element={<Appbar></Appbar>}></Route> */}
           <Route path={'/'} element={<HomePage></HomePage>}></Route>

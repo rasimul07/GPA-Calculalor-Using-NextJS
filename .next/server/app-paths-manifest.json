@@ -1,8 +1,7 @@
 {
-  "/page": "app/page.js",
   "/findYgpa/page": "app/findYgpa/page.js",
-  "/findPercentage/page": "app/findPercentage/page.js",
-  "/findSgpa/page": "app/findSgpa/page.js",
   "/findDgpa/page": "app/findDgpa/page.js",
-  "/gpaEquator/page": "app/gpaEquator/page.js"
+  "/findSgpa/page": "app/findSgpa/page.js",
+  "/gpaEquator/page": "app/gpaEquator/page.js",
+  "/findPercentage/page": "app/findPercentage/page.js"
 }

@@ -14,6 +14,7 @@ import axios from "axios";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { BASE_URL } from "../services/helper";
+import { calculateDgpa } from "../utils/gpaCalculations";
 
 const Profile = ({ email, setEmail }) => {
     return (
@@ -58,42 +59,6 @@ const calculateSgpas = (creditScores) => {
     return temp;
 };
 
-const calculateDgpa = (arrayOfYgpas, isLateralEntry) => {
-    if (!arrayOfYgpas || arrayOfYgpas.length === 0) return "0.00";
-    let sum = 0;
-    let dgpa = 0;
-    let numOfYear = arrayOfYgpas.length;
-    if (
-        numOfYear === 5 ||
-        numOfYear === 2 ||
-        (numOfYear === 3 && isLateralEntry === false)
-    ) {
-        for (let i = 0; i < numOfYear; i++) {
-            sum += parseFloat(arrayOfYgpas[i]);
-        }
-        dgpa = sum / numOfYear;
-    } else if (numOfYear === 4) {
-        for (let i = 0; i < numOfYear; i++) {
-            if (i > 1) {
-                sum += 1.5 * parseFloat(arrayOfYgpas[i]);
-            } else {
-                sum += parseFloat(arrayOfYgpas[i]);
-            }
-        }
-        dgpa = sum / numOfYear;
-    } else {
-        for (let i = 0; i < numOfYear; i++) {
-            if (i > 0) {
-                sum += 1.5 * parseFloat(arrayOfYgpas[i]);
-            } else {
-                sum += parseFloat(arrayOfYgpas[i]);
-            }
-        }
-        dgpa = sum / numOfYear;
-    }
-    return dgpa.toFixed(2);
-};
-
 const ViewProfile = ({ email, setEmail }) => {
     const router = useRouter();
 
@@ -126,7 +91,7 @@ const ViewProfile = ({ email, setEmail }) => {
                     setArrayOfYgpas(temp);
                     const temp2 = calculateSgpas(credits);
                     setArrayOfSgpas(temp2);
-                    const temp3 = calculateDgpa(temp, false);
+                    const temp3 = calculateDgpa(temp, temp.length, false);
                     setDgpa(temp3);
                 }
             } catch (error) {
@@ -190,8 +155,8 @@ const ViewProfile = ({ email, setEmail }) => {
                                     <thead>
                                         <tr style={{ background: '#f5f5f5' }}>
                                             <th style={{ padding: '8px' }}>Semester</th>
-                                            <th style={{ padding: '8px' }}>Obtained Credit</th>
                                             <th style={{ padding: '8px' }}>Full Credit</th>
+                                            <th style={{ padding: '8px' }}>Obtained Credit</th>
                                             <th style={{ padding: '8px' }}>SGPA</th>
                                             <th style={{ padding: '8px' }}>YGPA</th>
                                             <th style={{ padding: '8px' }}>DGPA</th>
@@ -204,8 +169,8 @@ const ViewProfile = ({ email, setEmail }) => {
                                                 {(index % 2 === 0) ?
                                                     <tr>
                                                         <td style={{ textAlign: 'center', padding: '6px' }}>{index / 2 + 1}</td>
-                                                        <td style={{ textAlign: 'center', padding: '6px' }}>{crd}</td>
                                                         <td style={{ textAlign: 'center', padding: '6px' }}>{creditScores[index + 1]}</td>
+                                                        <td style={{ textAlign: 'center', padding: '6px' }}>{crd}</td>
                                                         <td style={{ textAlign: 'center', padding: '6px' }}>{arrayOfSgpas[index / 2]}</td>
                                                         {(index % 4 === 0) ? <td style={{ textAlign: 'center', padding: '6px' }} rowSpan={2}>{arrayOfYgpas[index / 4]}</td> : null}
                                                         {(index === 0) ? <td style={{ textAlign: 'center', padding: '6px' }} rowSpan={arrayOfSgpas.length}>{dgpa}</td> : null}

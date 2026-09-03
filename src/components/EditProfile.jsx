@@ -1,23 +1,16 @@
 'use client';
 import React, { useState, useEffect } from "react";
-import { Button, Grid, Typography, TextField, Divider } from "@mui/material";
+import { Button, Grid, Typography, Divider } from "@mui/material";
 import { Box } from "@mui/material";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { Mauntain_Mist, Light_Gray, Birch, Corn, Cafe_Royale } from "../Colors";
+import { Mauntain_Mist, Light_Gray, Corn, Cafe_Royale } from "../Colors";
 import "../index.css";
 import { DialogBox } from "./FindPercentage";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import IconButton from '@mui/material/IconButton';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
 import { MyBackDrop } from "./Profile";
+import { AppTextField, AppSelect, AppPasswordField } from "./common";
 
 const EditProfile = ({ email, setEmail }) => {
     return (
@@ -174,52 +167,57 @@ const CustomProfile = ({ email, setEmail }) => {
                         }}>
                         <Grid container spacing={3} mb={2}>
                             <Grid item xs={12} sm={6} md={3}>
-                                <Typography fontSize={'0.9rem'} p={0.5} fontWeight="500">First Name:</Typography>
-                                <TextField size="small" fullWidth value={userInfo.firstName || ''} onChange={(e) => {
-                                    setUserInfo({ ...userInfo, firstName: e.target.value });
-                                }}></TextField>
+                                <AppTextField
+                                    label="First Name"
+                                    value={userInfo.firstName || ''}
+                                    onChange={(e) => setUserInfo({ ...userInfo, firstName: e.target.value })}
+                                />
                             </Grid>
 
                             <Grid item xs={12} sm={6} md={3}>
-                                <Typography fontSize={'0.9rem'} p={0.5} fontWeight="500">Last Name:</Typography>
-                                <TextField size="small" fullWidth value={userInfo.lastName || ''} onChange={(e) => {
-                                    setUserInfo({ ...userInfo, lastName: e.target.value });
-                                }}></TextField>
+                                <AppTextField
+                                    label="Last Name"
+                                    value={userInfo.lastName || ''}
+                                    onChange={(e) => setUserInfo({ ...userInfo, lastName: e.target.value })}
+                                />
                             </Grid>
 
                             <Grid item xs={12} sm={6} md={3}>
-                                <Typography fontSize={'0.9rem'} p={0.5} fontWeight="500">Phone No:</Typography>
-                                <TextField size="small" fullWidth type="number" value={userInfo.contact || ''} onChange={(e) => {
-                                    setUserInfo({ ...userInfo, contact: e.target.value });
-                                }}></TextField>
+                                <AppTextField
+                                    label="Phone No"
+                                    type="number"
+                                    value={userInfo.contact || ''}
+                                    onChange={(e) => setUserInfo({ ...userInfo, contact: e.target.value })}
+                                />
                             </Grid>
 
                             <Grid item xs={12} sm={6} md={3}>
-                                <Typography fontSize={'0.9rem'} p={0.5} fontWeight="500">Email Id:</Typography>
-                                <TextField size="small" fullWidth value={userInfo.email || ''} onChange={(e) => {
-                                    setUserInfo({ ...userInfo, email: e.target.value });
-                                }}></TextField>
+                                <AppTextField
+                                    label="Email"
+                                    type="email"
+                                    value={userInfo.email || ''}
+                                    onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
+                                />
                             </Grid>
 
                             <Grid item xs={12} sm={6} md={3}>
-                                <Typography fontSize={'0.9rem'} p={0.5} fontWeight="500">Password:</Typography>
-                                <PasswordField password={userInfo.password || ''} userInfo={userInfo} setUserInfo={setUserInfo}></PasswordField>
+                                <AppPasswordField
+                                    value={userInfo.password || ''}
+                                    onChange={(e) => setUserInfo({ ...userInfo, password: e.target.value })}
+                                />
                             </Grid>
 
                             <Grid item xs={12} sm={6} md={3}>
-                                <Typography fontSize={'0.9rem'} p={0.5} fontWeight="500">Select no of semester:</Typography>
-                                <FormControl size="small" fullWidth>
-                                    <InputLabel id="select-no-of-sems">No of sems</InputLabel>
-                                    <Select
-                                        labelId="select-no-of-sems"
-                                        value={numOfSemester || 1}
-                                        label="No of sems"
-                                        onChange={handleChange}>
-                                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
-                                            <MenuItem key={n} value={n}>{n}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
+                                <AppSelect
+                                    label="No of sems"
+                                    labelId="select-no-of-sems"
+                                    value={numOfSemester || 1}
+                                    onChange={handleChange}
+                                >
+                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
+                                        <MenuItem key={n} value={n}>{n}</MenuItem>
+                                    ))}
+                                </AppSelect>
                             </Grid>
                         </Grid>
                     </Box>
@@ -250,12 +248,7 @@ const CustomProfile = ({ email, setEmail }) => {
                                         xs={12}
                                         md={6}
                                     >
-                                        <Box sx={{
-                                            background: Light_Gray,
-                                            borderRadius: '10px',
-                                            p: 2,
-                                            boxShadow: `0px 0px 2px 0px rgba(0,0,0,0.2)`
-                                        }}>
+                                        <Box className="semester-input-block">
                                             <Typography
                                                 fontWeight={"bold"}
                                                 pb={1}
@@ -265,33 +258,7 @@ const CustomProfile = ({ email, setEmail }) => {
                                             </Typography>
                                             <Grid container spacing={2}>
                                                 <Grid item xs={6}>
-                                                    <TextField
-                                                        variant="outlined"
-                                                        size="small"
-                                                        fullWidth
-                                                        required
-                                                        label={`Obtained credit`}
-                                                        onChange={(e) =>
-                                                            handleCreditValues(index * 2, e.target.value)
-                                                        }
-                                                        onFocus={() => isVisitedHandler(index * 2)}
-                                                        value={creditValues[index * 2] || ""}
-                                                        error={
-                                                            (creditValues[index * 2] === "" && isVisited[index * 2])
-                                                        }
-                                                        helperText={
-                                                            (creditValues[index * 2] === "" && isVisited[index * 2])
-                                                                ? "Required field"
-                                                                : "Obtained credit"
-                                                        }
-                                                        type="number"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6}>
-                                                    <TextField
-                                                        variant="outlined"
-                                                        size="small"
-                                                        fullWidth
+                                                    <AppTextField
                                                         required
                                                         label={`Full credit Point`}
                                                         type="number"
@@ -310,6 +277,26 @@ const CustomProfile = ({ email, setEmail }) => {
                                                         }
                                                     />
                                                 </Grid>
+                                                <Grid item xs={6}>
+                                                    <AppTextField
+                                                        required
+                                                        label={`Obtained credit`}
+                                                        onChange={(e) =>
+                                                            handleCreditValues(index * 2, e.target.value)
+                                                        }
+                                                        onFocus={() => isVisitedHandler(index * 2)}
+                                                        value={creditValues[index * 2] || ""}
+                                                        error={
+                                                            (creditValues[index * 2] === "" && isVisited[index * 2])
+                                                        }
+                                                        helperText={
+                                                            (creditValues[index * 2] === "" && isVisited[index * 2])
+                                                                ? "Required field"
+                                                                : "Obtained credit"
+                                                        }
+                                                        type="number"
+                                                    />
+                                                </Grid>
                                             </Grid>
                                         </Box>
                                     </Grid>
@@ -319,44 +306,10 @@ const CustomProfile = ({ email, setEmail }) => {
                     </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-                    <Button variant="contained" size="large" sx={{ background: Cafe_Royale, px: 4, py: 1 }} onClick={handleSubmit} >Save Changes</Button>
+                    <Button variant="contained" size="large" sx={{ px: 4, py: 1 }} onClick={handleSubmit}>Save Changes</Button>
                 </Box>
             </Box>
         </Box>
-    );
-};
-
-const PasswordField = ({ password, userInfo, setUserInfo }) => {
-    const [showPassword, setShowPassword] = React.useState(false);
-
-    const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
-    };
-    return (
-        <FormControl variant="outlined" size="small" fullWidth>
-            <OutlinedInput
-                id="outlined-adornment-password"
-                type={showPassword ? 'text' : 'password'}
-                value={password || ''}
-                onChange={(e) => {
-                    setUserInfo({ ...userInfo, password: e.target.value });
-                }}
-                endAdornment={
-                    <InputAdornment position="end">
-                        <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            edge="end"
-                        >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                    </InputAdornment>
-                }
-            />
-        </FormControl>
     );
 };
 
