@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
+import config from '@/config';
 import { connectDB } from '@/lib/db';
 import User from '@/lib/models/User';
 import PaymentEvent from '@/lib/models/PaymentEvent';
 import { verifyBmcSignature } from '@/lib/bmcWebhook';
+import { emitPremiumUnlocked } from '@/lib/socket';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,13 +28,14 @@ async function grantPremium(email, paymentId) {
   const user = await findUserByEmail(email);
   if (!user) {
     console.warn(`BMC webhook: no user found for email ${email}`);
-    return;
+    return null;
   }
 
   user.isPremium = true;
   user.premiumActivatedAt = new Date();
   if (paymentId) user.bmcPaymentId = paymentId;
   await user.save();
+  return user;
 }
 
 async function revokePremium(email, paymentId) {
@@ -54,7 +57,7 @@ async function revokePremium(email, paymentId) {
 }
 
 export async function POST(req) {
-  const secret = process.env.BMC_WEBHOOK_SIGNING_SECRET;
+  const secret = config.bmcWebhookSigningSecret;
   const rawBody = await req.text();
   const signature = req.headers.get('x-signature-sha256');
 
@@ -94,7 +97,10 @@ export async function POST(req) {
         && data?.status === 'succeeded'
         && data?.refunded === 'false'
       ) {
-        await grantPremium(email, data.id);
+        const user = await grantPremium(email, data.id);
+        if (user) {
+          emitPremiumUnlocked(user._id.toString());
+        }
       }
     } else if (type === 'donation.refunded') {
       const email = data?.supporter_email;

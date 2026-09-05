@@ -17,11 +17,14 @@ import { useRouter, useParams } from 'next/navigation';
 import axios from 'axios';
 import { BASE_URL } from '../services/helper';
 import { Birch, Cafe_Royale } from '../Colors';
+import { accentButtonSx } from '../styles/buttonStyles';
 import ProfileSummaryCards from './profile/ProfileSummaryCards';
 import SemesterBreakdownTable from './profile/SemesterBreakdownTable';
 import YearBreakdownTable from './profile/YearBreakdownTable';
 import CreditPointsDrawer from './profile/CreditPointsDrawer';
 import PremiumPaywall from './premium/PremiumPaywall';
+import PaymentSuccessModal from './premium/PaymentSuccessModal';
+import { usePremiumUnlockSocket } from '../hooks/usePremiumUnlockSocket';
 
 const emptyBreakdown = {
   semesters: [],
@@ -44,6 +47,10 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+
+  const { showSuccessModal, dismissAndReload } = usePremiumUnlockSocket({
+    enabled: !loading && !isPremium,
+  });
 
   const fetchProfile = useCallback(async () => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -124,10 +131,7 @@ const Profile = () => {
               startIcon={hasCredits ? <EditIcon /> : <AddIcon />}
               onClick={() => setDrawerOpen(true)}
               sx={{
-                bgcolor: '#E5AF05',
-                color: Birch,
-                fontWeight: 700,
-                '&:hover': { bgcolor: '#d4a004' },
+                ...accentButtonSx,
               }}
             >
               {creditButtonLabel}
@@ -181,7 +185,7 @@ const Profile = () => {
                   variant="contained"
                   startIcon={<AddIcon />}
                   onClick={() => setDrawerOpen(true)}
-                  sx={{ bgcolor: Cafe_Royale, fontWeight: 700, '&:hover': { bgcolor: '#5a3a0c' } }}
+                  sx={accentButtonSx}
                 >
                   Add Credit Points
                 </Button>
@@ -198,6 +202,8 @@ const Profile = () => {
         hasExistingCredits={hasCredits}
         onSaved={handleSaved}
       />
+
+      <PaymentSuccessModal open={showSuccessModal} onComplete={dismissAndReload} />
     </Box>
   );
 };

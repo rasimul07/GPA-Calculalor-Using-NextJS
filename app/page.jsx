@@ -1,11 +1,39 @@
 import HomePage from '@/src/components/HomePage';
+import HomeJsonLd from '@/src/components/seo/HomeJsonLd';
+import {
+  siteUrl,
+  siteName,
+  homeTitle,
+  homeDescription,
+  homeKeywords,
+} from '@/src/constants/seoConfig';
 
 export const metadata = {
-  title: 'MAKAUT GPA Calculator - Home',
-  description:
-    'Free MAKAUT University GPA calculator for all affiliated colleges. Calculate SGPA, YGPA, DGPA, percentage, analyze GPA goals, and unlock the paid GPA store to save your credits.',
+  title: { absolute: homeTitle },
+  description: homeDescription,
+  keywords: homeKeywords,
+  openGraph: {
+    title: homeTitle,
+    description: homeDescription,
+    url: siteUrl,
+    siteName,
+    type: 'website',
+    locale: 'en_IN',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: homeTitle,
+    description: homeDescription,
+  },
+  robots: { index: true, follow: true },
+  alternates: { canonical: '/' },
 };
 
 export default function Home() {
-  return <HomePage />;
+  return (
+    <>
+      <HomeJsonLd />
+      <HomePage />
+    </>
+  );
 }

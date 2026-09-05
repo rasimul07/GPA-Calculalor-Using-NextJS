@@ -36,7 +36,7 @@ const FooterLink = ({ href, children }) => (
 );
 
 const Footer = () => {
-  const { developer, footerLinks, tagline, copyright } = siteConfig;
+  const { developer, footerLinks, tagline, copyright, contact } = siteConfig;
   const hasDeveloperInfo =
     developer.name || developer.email || developer.github || developer.linkedin || developer.portfolio;
 
@@ -51,7 +51,7 @@ const Footer = () => {
     >
       <Container maxWidth="lg" sx={{ py: { xs: 4, md: 5 } }}>
         <Grid container spacing={4}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={6} md={3}>
             <Typography
               variant="h6"
               fontWeight={700}
@@ -64,7 +64,7 @@ const Footer = () => {
             </Typography>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid item xs={12} sm={6} md={3}>
             <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1.5 }}>
               Quick Links
             </Typography>
@@ -75,7 +75,7 @@ const Footer = () => {
             ))}
           </Grid>
 
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid item xs={12} sm={6} md={3}>
             <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1.5 }}>
               Account
             </Typography>
@@ -148,6 +148,32 @@ const Footer = () => {
                   )}
                 </Stack>
               </Box>
+            )}
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 1.5 }}>
+              Support
+            </Typography>
+            {footerLinks.support?.map((link) => (
+              <FooterLink key={link.href} href={link.href}>
+                {link.label}
+              </FooterLink>
+            ))}
+            {contact?.email && (
+              <Link
+                href={`mailto:${contact.email}`}
+                underline="hover"
+                sx={{
+                  color: 'rgba(255,255,255,0.85)',
+                  fontSize: '0.9rem',
+                  display: 'block',
+                  py: 0.4,
+                  '&:hover': { color: Corn },
+                }}
+              >
+                {contact.email}
+              </Link>
             )}
           </Grid>
         </Grid>

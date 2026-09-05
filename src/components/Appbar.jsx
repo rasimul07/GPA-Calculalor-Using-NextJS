@@ -30,11 +30,14 @@ function Appbar({ email, setEmail, userId, setUserId }) {
   const searchParams = useSearchParams();
   const authParam = searchParams.get('auth');
 
-  const [massage, setMassage] = useState('');
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [toast, setToast] = useState({ open: false, message: '', severity: 'success' });
 
   const openSignIn = authParam === AUTH_MODES.signin;
   const openSignUp = authParam === AUTH_MODES.signup;
+
+  const showToast = useCallback((message, severity = 'success') => {
+    setToast({ open: true, message, severity });
+  }, []);
 
   const openAuth = useCallback(
     (mode) => {
@@ -47,6 +50,11 @@ function Appbar({ email, setEmail, userId, setUserId }) {
     router.replace(pathname);
   }, [router, pathname]);
 
+  const handleToastClose = (event, reason) => {
+    if (reason === 'clickaway') return;
+    setToast((prev) => ({ ...prev, open: false }));
+  };
+
   return (
     <div style={{ position: 'sticky', top: 0, zIndex: 1100, flexShrink: 0 }}>
       <MyAppbar email={email} userId={userId} pages={pages} openAuth={openAuth} />
@@ -56,9 +64,7 @@ function Appbar({ email, setEmail, userId, setUserId }) {
         open={openSignIn}
         onClose={closeAuth}
         openAuth={openAuth}
-        massage={massage}
-        setMassage={setMassage}
-        setSnackbarOpen={setSnackbarOpen}
+        showToast={showToast}
         onAuthSuccess={(id) => router.push(`/${id}`)}
       />
       <SignUp
@@ -67,19 +73,18 @@ function Appbar({ email, setEmail, userId, setUserId }) {
         open={openSignUp}
         onClose={closeAuth}
         openAuth={openAuth}
-        setSnackbarOpen={setSnackbarOpen}
+        showToast={showToast}
         onAuthSuccess={(id) => router.push(`/${id}`)}
       />
       <Snackbar
-        open={snackbarOpen}
+        open={toast.open}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        autoHideDuration={2000}
-        onClose={(event, reason) => {
-          if (reason === 'clickaway') return;
-          setSnackbarOpen(false);
-        }}
+        autoHideDuration={4000}
+        onClose={handleToastClose}
       >
-        <Alert severity="success">Login Sucessfully</Alert>
+        <Alert onClose={handleToastClose} severity={toast.severity} sx={{ width: '100%' }}>
+          {toast.message}
+        </Alert>
       </Snackbar>
     </div>
   );

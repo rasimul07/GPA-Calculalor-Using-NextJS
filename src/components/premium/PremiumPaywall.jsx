@@ -16,14 +16,17 @@ import PaymentOptions from './PaymentOptions';
 import { gpaStoreFeatures } from '../../constants/siteConfig';
 import { BASE_URL } from '../../services/helper';
 import { Birch, Cafe_Royale } from '../../Colors';
+import PaymentSuccessModal from './PaymentSuccessModal';
+import config from '@/config';
 
-const showUnlockCode = process.env.NEXT_PUBLIC_SHOW_UNLOCK_CODE === 'true';
+const showUnlockCode = config.showUnlockCode;
 
 const PremiumPaywall = () => {
   const router = useRouter();
   const [unlockCode, setUnlockCode] = useState('');
   const [unlockError, setUnlockError] = useState('');
   const [unlocking, setUnlocking] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleUnlock = async () => {
     setUnlockError('');
@@ -36,7 +39,7 @@ const PremiumPaywall = () => {
         { headers: { authorization: `Bearer ${token}` } }
       );
       if (response.data?.isPremium) {
-        window.location.reload();
+        setShowSuccessModal(true);
       }
     } catch (err) {
       setUnlockError(err.response?.data?.message || 'Invalid unlock code.');
@@ -67,7 +70,7 @@ const PremiumPaywall = () => {
       </Stack>
 
       <Box sx={{ maxWidth: 640, mx: 'auto', mb: 3 }}>
-        <PaymentOptions id="payment-section" />
+        <PaymentOptions id="payment-section" listenForUnlock={false} />
       </Box>
 
       <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 3 }}>
@@ -116,6 +119,10 @@ const PremiumPaywall = () => {
           )}
         </Box>
       )}
+      <PaymentSuccessModal
+        open={showSuccessModal}
+        onComplete={() => window.location.reload()}
+      />
     </Box>
   );
 };

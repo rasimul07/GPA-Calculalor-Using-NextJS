@@ -1,23 +1,17 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { Button, Typography, Stack, Card, CardActions, IconButton } from '@mui/material';
+import React from 'react';
+import { Button, Typography, Stack, Card, CardActions, IconButton, CircularProgress, Link } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import CloseIcon from '@mui/icons-material/Close';
+import { Formik } from 'formik';
+import { useRouter } from 'next/navigation';
 import { BASE_URL } from '../services/helper';
 import { setStoredToken } from '../utils/authSession';
 import { AppTextField } from './common';
+import { signInSchema } from '../validation/authSchemas';
 
-function SignIn({ setEmail, setUserId, open, onClose, openAuth, massage, setMassage, setSnackbarOpen, onAuthSuccess }) {
-  const [emailId, setEmailId] = useState('');
-  const [password, setPassword] = useState('');
-
-  useEffect(() => {
-    if (!open) {
-      setEmailId('');
-      setPassword('');
-      setMassage('');
-    }
-  }, [open, setMassage]);
+function SignIn({ setEmail, setUserId, open, onClose, openAuth, showToast, onAuthSuccess }) {
+  const router = useRouter();
 
   const handleClose = () => {
     onClose();
@@ -41,71 +35,113 @@ function SignIn({ setEmail, setUserId, open, onClose, openAuth, massage, setMass
         >
           <CloseIcon />
         </IconButton>
-        <Stack spacing={2}>
-          <Typography variant="h5" textAlign="center" sx={{ fontWeight: '700', color: '#423726' }}>
-            Welcome Back
-          </Typography>
-          <Typography variant="body2" textAlign="center" color="text.secondary">
-            Sign in to save your credit data
-          </Typography>
-          <AppTextField
-            label="Email"
-            type="email"
-            size="medium"
-            placeholder="you@example.com"
-            value={emailId}
-            onChange={(e) => setEmailId(e.target.value)}
-          />
-          <AppTextField
-            label="Password"
-            type="password"
-            size="medium"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Typography textAlign="center" color="error" sx={{ fontSize: '0.85rem', minHeight: '20px' }}>
-            {massage}
-          </Typography>
-        </Stack>
-        <CardActions sx={{ justifyContent: 'center', pt: 2, px: 0 }}>
-          <Button
-            color="primary"
-            variant="contained"
-            fullWidth
-            size="large"
-            onClick={() => {
-              fetch(`${BASE_URL}/user/signin`, {
+
+        <Formik
+          key={open ? 'signin-open' : 'signin-closed'}
+          initialValues={{ email: '', password: '' }}
+          validationSchema={signInSchema}
+          validateOnBlur
+          onSubmit={async (values, { setSubmitting, resetForm }) => {
+            try {
+              const res = await fetch(`${BASE_URL}/user/signin`, {
                 method: 'POST',
-                body: JSON.stringify({ email: emailId, password }),
+                body: JSON.stringify({ email: values.email.trim(), password: values.password }),
                 headers: { 'Content-Type': 'application/json' },
-              })
-                .then((res) => res.json())
-                .then((data) => {
-                  setMassage(data.massage);
-                  const token = data.token;
-                  if (token) {
-                    setSnackbarOpen(true);
-                    setStoredToken(token);
-                    setEmail(data.email || emailId);
-                    if (data.userId) {
-                      setUserId(data.userId);
-                    }
-                    handleClose();
-                    if (data.userId && onAuthSuccess) {
-                      onAuthSuccess(data.userId);
-                    }
-                  }
-                })
-                .catch((err) => {
-                  console.error('Sign in error:', err);
-                  setMassage('Sign in failed. Check network connection.');
-                });
-            }}
-          >
-            Sign In
-          </Button>
-        </CardActions>
+              });
+              const data = await res.json();
+              const token = data.token;
+
+              if (token) {
+                setStoredToken(token);
+                setEmail(data.email || values.email.trim());
+                if (data.userId) setUserId(data.userId);
+                resetForm();
+                handleClose();
+                showToast?.('Signed in successfully!', 'success');
+                if (data.userId && onAuthSuccess) onAuthSuccess(data.userId);
+              } else {
+                showToast?.(data.massage || data.message || 'Invalid email or password', 'error');
+              }
+            } catch (err) {
+              console.error('Sign in error:', err);
+              showToast?.('Sign in failed. Check your network connection.', 'error');
+            } finally {
+              setSubmitting(false);
+            }
+          }}
+        >
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            isSubmitting,
+          }) => (
+            <form onSubmit={handleSubmit} noValidate>
+              <Stack spacing={2}>
+                <Typography variant="h5" textAlign="center" sx={{ fontWeight: '700', color: '#423726' }}>
+                  Welcome Back
+                </Typography>
+                <Typography variant="body2" textAlign="center" color="text.secondary">
+                  Sign in to save your credit data
+                </Typography>
+                <AppTextField
+                  name="email"
+                  label="Email"
+                  type="email"
+                  size="medium"
+                  placeholder="you@example.com"
+                  value={values.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.email && Boolean(errors.email)}
+                  helperText={touched.email && errors.email}
+                />
+                <AppTextField
+                  name="password"
+                  label="Password"
+                  type="password"
+                  size="medium"
+                  placeholder="Enter your password"
+                  value={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={touched.password && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
+                />
+                <Typography variant="body2" textAlign="right">
+                  <Link
+                    component="button"
+                    type="button"
+                    variant="body2"
+                    onClick={() => {
+                      handleClose();
+                      router.push('/forgot-password');
+                    }}
+                    sx={{ cursor: 'pointer', textDecoration: 'none' }}
+                  >
+                    Forgot password?
+                  </Link>
+                </Typography>
+              </Stack>
+              <CardActions sx={{ justifyContent: 'center', pt: 2, px: 0 }}>
+                <Button
+                  type="submit"
+                  color="primary"
+                  variant="contained"
+                  fullWidth
+                  size="large"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? <CircularProgress size={26} color="inherit" /> : 'Sign In'}
+                </Button>
+              </CardActions>
+            </form>
+          )}
+        </Formik>
+
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 12 }}>
           <Typography variant="body2" textAlign="center" color="text.secondary">
             Don&apos;t have an account?

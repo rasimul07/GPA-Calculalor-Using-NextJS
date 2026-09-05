@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
+import config from '@/config';
 import { connectDB } from '@/lib/db';
 import User from '@/lib/models/User';
 import { verifyAuthToken } from '@/lib/auth';
 import { runGrandfatherMigration } from '@/lib/premiumMigration';
 
 export async function POST(req) {
-  const unlockCode = process.env.PREMIUM_UNLOCK_CODE;
+  const unlockCode = config.premiumUnlockCode;
   if (!unlockCode) {
     return NextResponse.json({ message: 'Unlock not available' }, { status: 404 });
   }

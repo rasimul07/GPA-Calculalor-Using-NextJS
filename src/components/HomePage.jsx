@@ -23,6 +23,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import { useRouter } from 'next/navigation';
 import { Birch, Cafe_Royale, Corn } from '../Colors';
+import { accentButtonSx } from '../styles/buttonStyles';
 import { homeTools, homeBenefits, gpaStoreFeatures } from '../constants/siteConfig';
 import PaymentOptions from './premium/PaymentOptions';
 import '../index.css';
@@ -98,7 +99,8 @@ const HeroSection = ({ forAniPages }) => {
           content: '""',
           position: 'absolute',
           inset: 0,
-          background: 'rgba(0,0,0,0.45)',
+          background:
+            'linear-gradient(135deg, rgba(117,75,15,0.28) 0%, rgba(0,0,0,0.22) 50%, rgba(229,175,5,0.12) 100%)',
         },
       }}
     >
@@ -167,11 +169,10 @@ const HeroSection = ({ forAniPages }) => {
               size="large"
               onClick={scrollToTools}
               sx={{
-                backgroundColor: Corn,
-                color: Birch,
-                fontWeight: 700,
+                ...accentButtonSx,
                 px: 3,
-                '&:hover': { backgroundColor: '#d4a004' },
+                py: 1.25,
+                fontSize: '1rem',
               }}
             >
               Start Calculating

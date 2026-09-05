@@ -7,6 +7,11 @@ export const siteConfig = {
     linkedin: '',
     portfolio: '',
   },
+  contact: {
+    email: 'mricoding782@gmail.com',
+    responseTime: 'We usually reply within 24–48 hours',
+    description: 'Questions about calculators, GPA store, payments, or account issues',
+  },
   footerLinks: {
     tools: [
       { label: 'Home', href: '/' },
@@ -20,6 +25,9 @@ export const siteConfig = {
       { label: 'Sign In', href: '/?auth=signin' },
       { label: 'Sign Up', href: '/?auth=signup' },
       { label: 'Profile', href: '/profile' },
+    ],
+    support: [
+      { label: 'Contact', href: '/contact' },
     ],
   },
   copyright: `© ${new Date().getFullYear()} MAKAUT GPA Calculator`,
