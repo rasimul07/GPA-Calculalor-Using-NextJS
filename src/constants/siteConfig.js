@@ -13,7 +13,7 @@ export const siteConfig = {
     description: 'Questions about calculators, GPA store, payments, or account issues',
   },
   whatsapp: {
-    phone: '919876543210',
+    phone: '917047615704',
     message: 'Hi! I have a question about the MAKAUT GPA Calculator.',
   },
   footerLinks: {
