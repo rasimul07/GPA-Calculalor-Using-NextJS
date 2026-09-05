@@ -1,37 +1,18 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, Suspense } from 'react';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Appbar } from '@/src/components/Appbar';
-import axios from 'axios';
-import { BASE_URL } from '@/src/services/helper';
+import Footer from '@/src/components/Footer';
+import AuthBootstrap from '@/src/components/AuthBootstrap';
 import theme from '@/src/theme/theme';
 import '@/src/index.css';
 import '@/src/App.css';
 
 export default function RootLayout({ children }) {
   const [email, setEmail] = useState(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-      if (!token || token === 'null') return;
-      try {
-        const response = await axios.get(`${BASE_URL}/user/me`, {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.data?.email) {
-          setEmail(response.data.email);
-        }
-      } catch (err) {
-        console.error('Failed to fetch user in RootLayout:', err);
-      }
-    };
-    fetchUser();
-  }, []);
+  const [userId, setUserId] = useState(null);
 
   return (
     <html lang="en">
@@ -44,9 +25,14 @@ export default function RootLayout({ children }) {
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '100vh'}}>
-              <Appbar email={email} setEmail={setEmail} />
-              <div style={{ flex: 1, overflow: 'auto' }}>{children}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+              <Suspense fallback={null}>
+                <AuthBootstrap userId={userId} setEmail={setEmail} setUserId={setUserId}>
+                  <Appbar email={email} setEmail={setEmail} userId={userId} setUserId={setUserId} />
+                </AuthBootstrap>
+              </Suspense>
+              <div style={{ flex: 1 }}>{children}</div>
+              <Footer />
             </div>
           </ThemeProvider>
         </AppRouterCacheProvider>

@@ -16,7 +16,12 @@ export async function POST(req) {
     }
 
     const token = jwt.sign({ email, password }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '3h' });
-    return NextResponse.json({ massage: 'login sucessfully--test', token, email }, { status: 200 });
+    return NextResponse.json({
+      massage: 'login sucessfully--test',
+      token,
+      email,
+      userId: user._id.toString(),
+    }, { status: 200 });
   } catch (error) {
     console.error('Signin error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

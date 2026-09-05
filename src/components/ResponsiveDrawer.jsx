@@ -5,6 +5,7 @@ import { IconButton } from "@mui/material";
 import { pages } from "./Appbar";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { clearStoredToken } from "../utils/authSession";
 
 function ResponsiveDrawer(props) {
   const router = useRouter();
@@ -49,7 +50,7 @@ function ResponsiveDrawer(props) {
             </ListItemButton>
             <ListItemButton onClick={() => {
               setIsDrawerOpen(false);
-              router.push('/profile');
+              router.push(props.userId ? `/${props.userId}` : '/profile');
             }}>
               <ListItemText primary="Profile" />
             </ListItemButton>
@@ -89,7 +90,7 @@ function LogInLogOut(props) {
     return (
       <ListItemButton onClick={() => {
         props.setIsDrawerOpen(false);
-        router.push('/signin');
+        router.push('/?auth=signin');
       }} >
         <ListItemText primary="Log in" />
       </ListItemButton>
@@ -98,7 +99,7 @@ function LogInLogOut(props) {
   return (
     <ListItemButton onClick={() => {
       props.setIsDrawerOpen(false);
-      localStorage.removeItem("token");
+      clearStoredToken();
       window.location.href = '/';
     }}>
       <ListItemText primary="Log out" />

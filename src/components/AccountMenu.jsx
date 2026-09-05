@@ -13,8 +13,9 @@ import Menu from '@mui/material/Menu';
 import Logout from '@mui/icons-material/Logout';
 import "../index.css";
 import { useRouter } from "next/navigation";
+import { clearStoredToken } from "../utils/authSession";
 
-const AccountMenu = ({ email }) => {
+const AccountMenu = ({ email, userId }) => {
     const router = useRouter();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -44,7 +45,7 @@ const AccountMenu = ({ email }) => {
             >
                 <MenuItem onClick={() => {
                     handleClose();
-                    router.push('/profile');
+                    router.push(userId ? `/${userId}` : '/profile');
                 }}>
                     <Avatar 
                     sx={{ width: '2rem', height: '2rem', mr: 1.5 }}
@@ -54,7 +55,7 @@ const AccountMenu = ({ email }) => {
 
                 <MenuItem onClick={() => {
                     handleClose();
-                    localStorage.removeItem("token");
+                    clearStoredToken();
                     window.location.href = '/';
                 }}>
                     <ListItemIcon>

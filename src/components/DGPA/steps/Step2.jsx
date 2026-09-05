@@ -53,6 +53,11 @@ const Step2 = ({ onValidationError }) => {
         headers: { authorization: "Bearer " + token },
       });
 
+      if (response.data?.isPremium === false) {
+        onValidationError?.("Premium required to use profile data. Unlock the GPA store from your profile or home page.");
+        return;
+      }
+
       if (response.data?.credits?.length) {
         const credits = response.data.credits;
         const needed = creditValues.length;

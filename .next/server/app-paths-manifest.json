@@ -1,7 +1,20 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/[userId]/page": "app/[userId]/page.js",
+  "/api/user/getUserInfo/route": "app/api/user/getUserInfo/route.js",
+  "/api/user/signin/route": "app/api/user/signin/route.js",
+  "/api/user/credits/route": "app/api/user/credits/route.js",
+  "/api/user/me/route": "app/api/user/me/route.js",
+  "/api/user/signup/route": "app/api/user/signup/route.js",
+  "/api/user/unlock-premium/route": "app/api/user/unlock-premium/route.js",
+  "/api/user/updateUserInfo/route": "app/api/user/updateUserInfo/route.js",
+  "/editProfile/page": "app/editProfile/page.js",
+  "/profile/page": "app/profile/page.js",
   "/findYgpa/page": "app/findYgpa/page.js",
+  "/api/payments/buymeacoffee-webhook/route": "app/api/payments/buymeacoffee-webhook/route.js",
   "/findDgpa/page": "app/findDgpa/page.js",
+  "/page": "app/page.js",
+  "/findPercentage/page": "app/findPercentage/page.js",
   "/findSgpa/page": "app/findSgpa/page.js",
-  "/gpaEquator/page": "app/gpaEquator/page.js",
-  "/findPercentage/page": "app/findPercentage/page.js"
+  "/gpaEquator/page": "app/gpaEquator/page.js"
 }

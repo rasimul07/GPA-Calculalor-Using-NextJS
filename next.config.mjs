@@ -4,6 +4,15 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/signin',
+        destination: '/?auth=signin',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

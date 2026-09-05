@@ -34,6 +34,7 @@ const CustomProfile = ({ email, setEmail }) => {
     const [checkedBeforeSubmit, setCheckedBeforeSubmit] = useState(
         new Array(numOfSemester).fill(true)
     );
+    const [isPremium, setIsPremium] = useState(false);
 
     useEffect(() => {
         const func = async () => {
@@ -47,6 +48,7 @@ const CustomProfile = ({ email, setEmail }) => {
                 });
                 if (response.data) {
                     setUserInfo(response.data);
+                    setIsPremium(Boolean(response.data.isPremium));
                     const credits = response.data.credits || [];
                     const noSem = credits.length ? credits.length / 2 : 1;
                     setNumOfSemester(noSem);
@@ -95,7 +97,7 @@ const CustomProfile = ({ email, setEmail }) => {
     };
 
     const handleSubmit = () => {
-        if (creditValues.some((value) => value === "")) {
+        if (isPremium && creditValues.some((value) => value === "")) {
             alert("Please fill in all TextFields before submitting.");
             const temp = [...checkedBeforeSubmit];
             creditValues.forEach((value, index) => {
@@ -107,13 +109,14 @@ const CustomProfile = ({ email, setEmail }) => {
         } else {
             const func = async () => {
                 const body = {
-                    credits: creditValues,
                     firstName: userInfo.firstName,
                     lastName: userInfo.lastName,
                     contact: userInfo.contact,
                     email: userInfo.email,
-                    password: userInfo.password
                 };
+                if (isPremium) {
+                    body.credits = creditValues;
+                }
                 try {
                     const token = localStorage.getItem("token");
                     const response = await axios.put(`${BASE_URL}/user/updateUserInfo`,
@@ -125,7 +128,8 @@ const CustomProfile = ({ email, setEmail }) => {
 
                     if (response.status === 200) {
                         alert("Saved Successfully");
-                        router.push('/profile');
+                        const id = userInfo._id;
+                        router.push(id ? `/${id}` : '/profile');
                     }
                 }
                 catch (error) {
@@ -207,6 +211,7 @@ const CustomProfile = ({ email, setEmail }) => {
                                 />
                             </Grid>
 
+                            {isPremium && (
                             <Grid item xs={12} sm={6} md={3}>
                                 <AppSelect
                                     label="No of sems"
@@ -219,12 +224,15 @@ const CustomProfile = ({ email, setEmail }) => {
                                     ))}
                                 </AppSelect>
                             </Grid>
+                            )}
                         </Grid>
                     </Box>
                 </Box>
             </Box>
 
             <Box sx={{ background: Corn, pb: 4 }}>
+                {isPremium ? (
+                <>
                 <Grid container justifyContent="center">
                     <Grid item xs={11} md={10}>
                         <Box
@@ -308,6 +316,17 @@ const CustomProfile = ({ email, setEmail }) => {
                 <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
                     <Button variant="contained" size="large" sx={{ px: 4, py: 1 }} onClick={handleSubmit}>Save Changes</Button>
                 </Box>
+                </>
+                ) : (
+                <Box sx={{ textAlign: 'center', py: 4, px: 2 }}>
+                    <Typography variant="body1" color="white" sx={{ mb: 2 }}>
+                        Credit point editing requires premium. Unlock the GPA store from your profile.
+                    </Typography>
+                    <Button variant="contained" size="large" sx={{ px: 4, py: 1 }} onClick={handleSubmit}>
+                        Save Profile Info
+                    </Button>
+                </Box>
+                )}
             </Box>
         </Box>
     );

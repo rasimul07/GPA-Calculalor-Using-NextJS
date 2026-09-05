@@ -23,7 +23,12 @@ export async function POST(req) {
     await newUser.save();
 
     const token = jwt.sign({ email, password }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '3h' });
-    return NextResponse.json({ massage: 'user account created sucessfully', token }, { status: 200 });
+    return NextResponse.json({
+      massage: 'user account created sucessfully',
+      token,
+      email,
+      userId: newUser._id.toString(),
+    }, { status: 200 });
   } catch (error) {
     console.error('Signup error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

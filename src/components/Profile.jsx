@@ -1,217 +1,211 @@
 'use client';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-    Button,
-    Grid,
-    Typography,
-    Divider,
-} from "@mui/material";
-import { Box } from "@mui/material";
-import { Birch, Cafe_Royale } from "../Colors";
-import "../index.css";
-import { useRouter } from "next/navigation";
-import axios from "axios";
+  Box,
+  Container,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  Stack,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { BASE_URL } from "../services/helper";
-import { calculateDgpa } from "../utils/gpaCalculations";
+import { useRouter, useParams } from 'next/navigation';
+import axios from 'axios';
+import { BASE_URL } from '../services/helper';
+import { Birch, Cafe_Royale } from '../Colors';
+import ProfileSummaryCards from './profile/ProfileSummaryCards';
+import SemesterBreakdownTable from './profile/SemesterBreakdownTable';
+import YearBreakdownTable from './profile/YearBreakdownTable';
+import CreditPointsDrawer from './profile/CreditPointsDrawer';
+import PremiumPaywall from './premium/PremiumPaywall';
 
-const Profile = ({ email, setEmail }) => {
-    return (
-        <Box>
-            <ViewProfile email={email} setEmail={setEmail}></ViewProfile>
-        </Box>
-    );
+const emptyBreakdown = {
+  semesters: [],
+  years: [],
+  dgpa: '0.00',
+  cgpa: '0.00',
+  overallPercentage: '0.00',
+  semesterCount: 0,
 };
 
-const calculateYgpas = (creditScores) => {
-    if (!creditScores) return [];
-    let obcredit = 0;
-    let total_full_credit = 0;
-    const temp = [];
+const Profile = () => {
+  const router = useRouter();
+  const params = useParams();
+  const urlUserId = params?.userId;
 
-    creditScores.forEach((value, index) => {
-        if (index % 2 === 0) {
-            obcredit = obcredit + parseFloat(value);
-        } else {
-            total_full_credit = total_full_credit + parseFloat(value);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [credits, setCredits] = useState([]);
+  const [breakdown, setBreakdown] = useState(emptyBreakdown);
+  const [loading, setLoading] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
+
+  const fetchProfile = useCallback(async () => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (!token || token === 'null') {
+      setLoading(false);
+      router.replace('/?auth=signin');
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${BASE_URL}/user/credits`, {
+        headers: { authorization: `Bearer ${token}` },
+      });
+
+      if (response.data) {
+        const { userId, firstName: fn, lastName: ln, credits: cr, breakdown: bd, isPremium: premium } = response.data;
+
+        if (urlUserId && userId && urlUserId !== userId) {
+          router.replace(`/${userId}`);
+          return;
         }
-        if (index % 4 === 3) {
-            const ygpa = (obcredit / total_full_credit);
-            temp.push(ygpa.toFixed(2));
-            obcredit = 0;
-            total_full_credit = 0;
-        }
-    });
 
-    return temp;
-};
+        setIsPremium(Boolean(premium));
 
-const calculateSgpas = (creditScores) => {
-    if (!creditScores) return [];
-    const temp = [];
-    creditScores.forEach((value, index) => {
-        if (index % 2 === 0) {
-            const sgpa = (value / creditScores[index + 1]);
-            temp.push(sgpa.toFixed(2));
-        }
-    });
-    return temp;
-};
+        setFirstName(fn || '');
+        setLastName(ln || '');
+        setCredits(cr || []);
+        setBreakdown(bd || emptyBreakdown);
+      }
+    } catch (error) {
+      console.error('Profile fetch error:', error);
+      if (error.response?.status === 401) {
+        router.replace('/?auth=signin');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [router, urlUserId]);
 
-const ViewProfile = ({ email, setEmail }) => {
-    const router = useRouter();
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
-    const [creditScores, setCreditScores] = useState([]);
-    const [userInfo, setUserInfo] = useState({});
-    const [arrayOfYgpas, setArrayOfYgpas] = useState([]);
-    const [arrayOfSgpas, setArrayOfSgpas] = useState([]);
-    const [dgpa, setDgpa] = useState("");
-    const [loading, setLoading] = useState(true);
+  const handleSaved = (data) => {
+    setCredits(data.credits || []);
+    setBreakdown(data.breakdown || emptyBreakdown);
+    if (data.firstName) setFirstName(data.firstName);
+    if (data.lastName) setLastName(data.lastName);
+  };
 
-    useEffect(() => {
-        const func = async () => {
-            const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-            if (!token || token === 'null') {
-                setLoading(false);
-                return;
-            }
-            try {
-                const response = await axios.get(`${BASE_URL}/user/getUserInfo`, {
-                    headers: {
-                        'authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (response.data) {
-                    setUserInfo(response.data);
-                    const credits = response.data.credits || [];
-                    setCreditScores(credits);
-                    const temp = calculateYgpas(credits);
-                    setArrayOfYgpas(temp);
-                    const temp2 = calculateSgpas(credits);
-                    setArrayOfSgpas(temp2);
-                    const temp3 = calculateDgpa(temp, temp.length, false);
-                    setDgpa(temp3);
-                }
-            } catch (error) {
-                console.error("Profile fetch error:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        func();
-    }, [email]);
+  const displayName = [firstName, lastName].filter(Boolean).join(' ') || 'Student';
+  const hasCredits = breakdown.semesterCount > 0;
+  const creditButtonLabel = hasCredits ? 'Edit Credit Points' : 'Add Credit Points';
 
-    return (
-        <Box
-            style={{
-                backgroundImage:
-                    "URL(https://images.unsplash.com/photo-1472289065668-ce650ac443d2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80)",
-                backgroundSize: "cover",
-                minHeight: "100vh",
-                backgroundPosition: "center center",
-            }}>
-            <Box height={"5rem"}></Box>
-            <Box>
-                <Typography
-                    textAlign={"center"}
-                    variant="h4"
-                    color={"white"}
-                    fontWeight={"bold"}
-                    padding={2}
-                    sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
-                    Profile
-                </Typography>
-                {loading ? <MyBackDrop /> : null}
+  return (
+    <Box sx={{ bgcolor: '#FDFBF7', minHeight: '100vh', pb: 6 }}>
+      {loading && <MyBackDrop />}
 
-                <Grid container spacing={3} justifyContent="center" sx={{ px: 2 }}>
-                    <Grid item md={8} xs={12}>
-                        <Box
-                            borderRadius={3}
-                            sx={{
-                                padding: "2rem",
-                                background: "rgba(255, 255, 255, 0.9)",
-                                backdropFilter: 'blur(10px)',
-                                boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.3)",
-                                margin: "1rem 0",
-                            }}>
-                            <Typography variant="body1" sx={{ py: 0.5 }}>
-                                <span style={{ fontWeight: "bold" }}>Name:</span> {userInfo.firstName || ''}{" "}
-                                {userInfo.lastName || ''}{" "}
-                            </Typography>
-                            <Typography variant="body1" sx={{ py: 0.5 }}>
-                                <span style={{ fontWeight: "bold" }}>Email Id: </span> {userInfo.email || email || ''}{" "}
-                            </Typography>
-                            <Typography variant="body1" sx={{ py: 0.5 }}>
-                                <span style={{ fontWeight: "bold" }}>Phone No:</span> {userInfo.contact || 'N/A'}{" "}
-                            </Typography>
-                            <Divider sx={{ my: 2 }} />
-                            <Typography fontWeight={"bold"} textTransform={"uppercase"} textAlign={'center'} p={1}>
-                                Semester Results
-                            </Typography>
-                            <Box overflow={'auto'}>
-                                <table border={1} width={"100%"} style={{ borderCollapse: 'collapse', borderColor: '#ccc' }}>
-                                    <thead>
-                                        <tr style={{ background: '#f5f5f5' }}>
-                                            <th style={{ padding: '8px' }}>Semester</th>
-                                            <th style={{ padding: '8px' }}>Full Credit</th>
-                                            <th style={{ padding: '8px' }}>Obtained Credit</th>
-                                            <th style={{ padding: '8px' }}>SGPA</th>
-                                            <th style={{ padding: '8px' }}>YGPA</th>
-                                            <th style={{ padding: '8px' }}>DGPA</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        {creditScores && creditScores.map((crd, index) => (
-                                            <React.Fragment key={index}>
-                                                {(index % 2 === 0) ?
-                                                    <tr>
-                                                        <td style={{ textAlign: 'center', padding: '6px' }}>{index / 2 + 1}</td>
-                                                        <td style={{ textAlign: 'center', padding: '6px' }}>{creditScores[index + 1]}</td>
-                                                        <td style={{ textAlign: 'center', padding: '6px' }}>{crd}</td>
-                                                        <td style={{ textAlign: 'center', padding: '6px' }}>{arrayOfSgpas[index / 2]}</td>
-                                                        {(index % 4 === 0) ? <td style={{ textAlign: 'center', padding: '6px' }} rowSpan={2}>{arrayOfYgpas[index / 4]}</td> : null}
-                                                        {(index === 0) ? <td style={{ textAlign: 'center', padding: '6px' }} rowSpan={arrayOfSgpas.length}>{dgpa}</td> : null}
-                                                    </tr>
-                                                    : null}
-                                            </React.Fragment>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </Box>
-                        </Box>
-                    </Grid>
-                    <Grid item md={3} xs={12}>
-                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button
-                                variant="contained"
-                                sx={{ color: "white", background: Cafe_Royale, m: '1.5rem', py: 1.5, px: 3, fontWeight: 'bold' }}
-                                onClick={() => {
-                                    router.push('/editProfile');
-                                }}>
-                                Edit Profile
-                            </Button>
-                        </Box>
-                    </Grid>
-                </Grid>
-            </Box>
-        </Box>
-    );
-};
-
-export const MyBackDrop = () => {
-    return (
-        <div>
-            <Backdrop
-                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={true}
+      <Box
+        sx={{
+          bgcolor: Cafe_Royale,
+          color: 'white',
+          py: { xs: 4, md: 5 },
+          mb: 3,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Typography variant="h4" fontWeight={800} gutterBottom>
+            {displayName}
+          </Typography>
+          <Typography variant="body1" sx={{ opacity: 0.9, mb: 3 }}>
+            {isPremium ? 'Your MAKAUT GPA Dashboard' : 'Unlock premium to access your GPA dashboard'}
+          </Typography>
+          {isPremium && (
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            <Button
+              variant="contained"
+              startIcon={hasCredits ? <EditIcon /> : <AddIcon />}
+              onClick={() => setDrawerOpen(true)}
+              sx={{
+                bgcolor: '#E5AF05',
+                color: Birch,
+                fontWeight: 700,
+                '&:hover': { bgcolor: '#d4a004' },
+              }}
             >
-                <CircularProgress color="inherit" />
-            </Backdrop>
-        </div>
-    );
+              {creditButtonLabel}
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => router.push('/editProfile')}
+              sx={{
+                borderColor: 'rgba(255,255,255,0.7)',
+                color: 'white',
+                fontWeight: 600,
+                '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.08)' },
+              }}
+            >
+              Edit Profile
+            </Button>
+          </Stack>
+          )}
+        </Container>
+      </Box>
+
+      <Container maxWidth="lg">
+        {!isPremium ? (
+          <PremiumPaywall />
+        ) : hasCredits ? (
+          <Stack spacing={4}>
+            <ProfileSummaryCards breakdown={breakdown} />
+            <SemesterBreakdownTable semesters={breakdown.semesters} />
+            <YearBreakdownTable years={breakdown.years} />
+          </Stack>
+        ) : (
+          !loading && (
+            <Card
+              elevation={0}
+              sx={{
+                border: '1px dashed #E0D8CC',
+                borderRadius: 3,
+                textAlign: 'center',
+                py: 6,
+                px: 3,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" fontWeight={600} color={Birch} gutterBottom>
+                  No credit points added yet
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3, maxWidth: 400, mx: 'auto' }}>
+                  Add your semester obtained and full credit points to see SGPA, YGPA, DGPA, CGPA, and percentage breakdown.
+                </Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={() => setDrawerOpen(true)}
+                  sx={{ bgcolor: Cafe_Royale, fontWeight: 700, '&:hover': { bgcolor: '#5a3a0c' } }}
+                >
+                  Add Credit Points
+                </Button>
+              </CardContent>
+            </Card>
+          )
+        )}
+      </Container>
+
+      <CreditPointsDrawer
+        open={drawerOpen && isPremium}
+        onClose={() => setDrawerOpen(false)}
+        initialCredits={credits}
+        hasExistingCredits={hasCredits}
+        onSaved={handleSaved}
+      />
+    </Box>
+  );
 };
+
+export const MyBackDrop = () => (
+  <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open>
+    <CircularProgress color="inherit" />
+  </Backdrop>
+);
 
 export default Profile;

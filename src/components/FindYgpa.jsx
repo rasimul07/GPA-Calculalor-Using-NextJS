@@ -44,6 +44,10 @@ const FindYgpa = ({ email, setEmail }) => {
                     }
                 });
                 if (response.data) {
+                    if (!response.data.isPremium) {
+                        alert("Premium required to use profile data. Unlock the GPA store from your profile or home page.");
+                        return;
+                    }
                     setUserInfo(response.data);
                     const credits = response.data.credits || [];
                     const noSem = credits.length / 2;
