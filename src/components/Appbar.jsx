@@ -4,6 +4,8 @@ import {
   Toolbar,
   Box,
   Stack,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import ResponsiveDrawer from './ResponsiveDrawer';
 import { useState, useCallback } from 'react';
@@ -29,6 +31,8 @@ function Appbar({ email, setEmail, userId, setUserId }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const authParam = searchParams.get('auth');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [toast, setToast] = useState({ open: false, message: '', severity: 'success' });
 
@@ -78,9 +82,13 @@ function Appbar({ email, setEmail, userId, setUserId }) {
       />
       <Snackbar
         open={toast.open}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{
+          vertical: isMobile ? 'bottom' : 'top',
+          horizontal: isMobile ? 'center' : 'right',
+        }}
         autoHideDuration={4000}
         onClose={handleToastClose}
+        sx={{ mb: isMobile ? 2 : 0 }}
       >
         <Alert onClose={handleToastClose} severity={toast.severity} sx={{ width: '100%' }}>
           {toast.message}
@@ -94,15 +102,34 @@ const MyAppbar = ({ email, userId, pages, openAuth }) => {
   const router = useRouter();
   return (
     <div style={{ backgroundColor: '#E5AF05', backdropFilter: 'blur(40px)', boxShadow: '0 4px 30px rgba(0, 0, 0, 0.3)' }}>
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Stack direction="row" alignItems="center">
+      <Toolbar
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: 1,
+          px: { xs: 1, sm: 2 },
+          minHeight: { xs: 56, md: 64 },
+        }}
+      >
+        <Stack direction="row" alignItems="center" sx={{ minWidth: 0, flex: 1 }}>
           <ResponsiveDrawer email={email} userId={userId} />
           <Button
             size="large"
-            sx={{ color: 'white', fontSize: { xs: 16, md: 22 }, fontWeight: 900, textTransform: 'none', letterSpacing: 0.5 }}
+            sx={{
+              color: 'white',
+              fontSize: { xs: '0.9rem', sm: '1rem', md: '1.375rem' },
+              fontWeight: 900,
+              textTransform: 'none',
+              letterSpacing: 0.5,
+              whiteSpace: 'nowrap',
+              minWidth: 0,
+              px: { xs: 0.5, sm: 1 },
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
             onClick={() => router.push('/')}
           >
-            GPA Calc-ulator
+            GPA Calculator
           </Button>
         </Stack>
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
@@ -131,7 +158,16 @@ const MyAppbar = ({ email, userId, pages, openAuth }) => {
 
         <Button
           variant="contained"
-          sx={{ backgroundColor: '#754B0F', display: email ? 'none' : 'block' }}
+          size="small"
+          sx={{
+            backgroundColor: '#754B0F',
+            display: email ? 'none' : 'inline-flex',
+            flexShrink: 0,
+            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+            px: { xs: 1.5, sm: 2 },
+            py: { xs: 0.6, sm: 0.75 },
+            minWidth: 'auto',
+          }}
           onClick={() => openAuth(AUTH_MODES.signin)}
         >
           Sign In

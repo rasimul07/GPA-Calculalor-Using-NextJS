@@ -243,6 +243,19 @@ const theme = createTheme({
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
           borderRadius: '16px',
           padding: '24px',
+          '@media (max-width:600px)': {
+            padding: '12px 8px',
+          },
+        },
+      },
+    },
+    MuiToolbar: {
+      styleOverrides: {
+        root: {
+          '@media (max-width:600px)': {
+            paddingLeft: 8,
+            paddingRight: 8,
+          },
         },
       },
     },

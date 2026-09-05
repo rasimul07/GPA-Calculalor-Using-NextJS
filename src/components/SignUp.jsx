@@ -15,14 +15,35 @@ function SignUp({ setEmail, setUserId, open, onClose, openAuth, showToast, onAut
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="xs"
+      scroll="body"
+      sx={{
+        '& .MuiDialog-container': {
+          alignItems: { xs: 'flex-end', sm: 'center' },
+        },
+      }}
+      PaperProps={{
+        sx: {
+          m: { xs: 0, sm: 2 },
+          width: '100%',
+          maxWidth: { xs: '100%', sm: 400 },
+          borderRadius: { xs: '16px 16px 0 0', sm: '16px' },
+          maxHeight: { xs: '92dvh', sm: 'none' },
+        },
+      }}
+    >
       <Card
         className="auth-dialog-card"
         sx={{
-          display: 'inline-block',
-          width: { xs: 320, md: 380 },
-          padding: 3,
+          width: '100%',
+          p: { xs: 2, sm: 3 },
+          pt: { xs: 3.5, sm: 3 },
           position: 'relative',
+          boxShadow: 'none',
         }}
       >
         <IconButton
@@ -78,7 +99,11 @@ function SignUp({ setEmail, setUserId, open, onClose, openAuth, showToast, onAut
           }) => (
             <form onSubmit={handleSubmit} noValidate>
               <Stack spacing={2}>
-                <Typography variant="h5" textAlign="center" sx={{ fontWeight: '700', color: '#423726' }}>
+                <Typography
+                  variant="h5"
+                  textAlign="center"
+                  sx={{ fontWeight: '700', color: '#423726', fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+                >
                   Create Account
                 </Typography>
                 <Typography variant="body2" textAlign="center" color="text.secondary">

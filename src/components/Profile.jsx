@@ -118,7 +118,7 @@ const Profile = () => {
         }}
       >
         <Container maxWidth="lg">
-          <Typography variant="h4" fontWeight={800} gutterBottom>
+          <Typography variant="h4" fontWeight={800} gutterBottom sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
             {displayName}
           </Typography>
           <Typography variant="body1" sx={{ opacity: 0.9, mb: 3 }}>

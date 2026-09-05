@@ -18,7 +18,7 @@ export default function ClientAppShell({ children }) {
     <AppRouterCacheProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', overflowX: 'hidden', width: '100%' }}>
           <Suspense fallback={null}>
             <AuthBootstrap userId={userId} setEmail={setEmail} setUserId={setUserId}>
               <Appbar email={email} setEmail={setEmail} userId={userId} setUserId={setUserId} />

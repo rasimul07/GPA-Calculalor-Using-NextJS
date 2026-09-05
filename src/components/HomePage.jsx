@@ -106,7 +106,7 @@ const HeroSection = ({ forAniPages }) => {
         },
       }}
     >
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, py: 6 }}>
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, py: { xs: 4, md: 6 }, px: { xs: 2, sm: 3 } }}>
         <Box sx={{ maxWidth: 700 }}>
           <Typography
             variant="h2"
@@ -222,8 +222,8 @@ const ToolsSection = () => {
   const router = useRouter();
 
   return (
-    <Box id="tools" sx={{ py: { xs: 6, md: 8 }, backgroundColor: '#FDFBF7' }}>
-      <Container maxWidth="lg">
+    <Box id="tools" sx={{ py: { xs: 4, md: 8 }, backgroundColor: '#FDFBF7' }}>
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
         <SectionHeading
           title="Free GPA Calculators"
           subtitle="All affiliated colleges of MAKAUT can calculate every GPA metric — no account needed."

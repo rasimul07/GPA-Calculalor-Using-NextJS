@@ -35,7 +35,7 @@ const ForgotPasswordPage = () => {
         <Container maxWidth="sm">
           <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1 }}>
             <LockResetIcon sx={{ fontSize: 32 }} />
-            <Typography variant="h4" fontWeight={800}>
+            <Typography variant="h4" fontWeight={800} sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
               Forgot Password
             </Typography>
           </Stack>

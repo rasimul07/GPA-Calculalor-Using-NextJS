@@ -119,19 +119,20 @@ const FindDgpaWizard = () => {
                 <Typography
                     textAlign="center"
                     variant="h4"
+                    className="calc-page-title"
                     color="white"
                     fontWeight="bold"
                     padding={1}
-                    sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
+                    sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)', fontSize: { xs: '1.35rem', sm: '1.75rem', md: '2rem' } }}
                 >
                     Find DGPA
                 </Typography>
 
                 <Box
-                    className="form-card"
+                    className="form-card page-shell"
                     sx={{
                         maxWidth: activeStep === 1 ? 800 : 520,
-                        margin: '0 auto',
+                        margin: { xs: '0.75rem auto', sm: '1.5rem auto' },
                         mt: 2,
                         mb: 4,
                         transition: 'max-width 0.3s ease',

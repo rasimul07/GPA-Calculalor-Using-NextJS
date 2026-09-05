@@ -60,14 +60,15 @@ const FindSgpa = () => {
             <Box>
                 <Typography textAlign={"center"}
                     variant="h4"
+                    className="calc-page-title"
                     color={"white"}
                     fontWeight={"bold"}
                     padding={1}
-                    sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+                    sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)', fontSize: { xs: '1.35rem', sm: '1.75rem', md: '2rem' } }}>
                     Find SGPA
                 </Typography>
 
-                <Grid container alignItems="center" justifyContent="center" sx={{ px: 2 }}>
+                <Grid container alignItems="center" justifyContent="center" className="page-shell" sx={{ px: { xs: 1, sm: 2 } }}>
                     <Grid item xs={12} md={6} lg={5}>
                         <Box className="form-card" sx={{ margin: "1.5rem 0" }}>
                             <DialogBox></DialogBox>

@@ -154,20 +154,22 @@ const CustomProfile = ({ email, setEmail }) => {
                     <Typography
                         textAlign={"center"}
                         variant="h4"
+                        className="calc-page-title"
                         color={"white"}
                         fontWeight={"bold"}
                         padding={2}
-                        sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+                        sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)', fontSize: { xs: '1.35rem', sm: '1.75rem', md: '2rem' } }}>
                         Edit Profile
                     </Typography>
                     {(Object.keys(userInfo).length === 0 && email) ? <MyBackDrop></MyBackDrop> : null}
                     <Box
                         borderRadius={3}
+                        className="page-shell"
                         sx={{
-                            padding: "1.5rem",
+                            padding: { xs: '1rem', sm: '1.5rem' },
                             background: "rgba(255, 255, 255, 0.95)",
                             boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.3)",
-                            margin: "1.5rem",
+                            margin: { xs: '0.75rem', sm: '1.5rem' },
                         }}>
                         <Grid container spacing={3} mb={2}>
                             <Grid item xs={12} sm={6} md={3}>

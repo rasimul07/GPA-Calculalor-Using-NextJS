@@ -1,10 +1,6 @@
-@media only screen and (max-width: 500px) {
-    .resposive_image{
-        width: 400px;
-    }
-}
-@media (min-width: 500px) {
-    .resposive_image{
-        width: 600px;
-    }
+.responsive_image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
 }

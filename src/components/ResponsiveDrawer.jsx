@@ -21,13 +21,13 @@ function ResponsiveDrawer(props) {
         aria-label="menu"
         onClick={() => setIsDrawerOpen(true)}
         sx={{
-          ml: 1,
+          mr: { xs: 0.5, sm: 1 },
           display: {
-            md: 'none'
-          }
+            md: 'none',
+          },
         }}
       >
-        <MenuIcon sx={{ height: 30, width: 30 }} />
+        <MenuIcon sx={{ height: 28, width: 28 }} />
       </IconButton>
 
       <Drawer anchor="left" open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>

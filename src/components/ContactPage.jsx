@@ -35,7 +35,7 @@ const ContactPage = () => {
     <Box sx={{ bgcolor: '#FDFBF7', minHeight: '100vh', pb: 6 }}>
       <Box sx={{ bgcolor: Cafe_Royale, color: 'white', py: { xs: 4, md: 5 }, mb: 4 }}>
         <Container maxWidth="md">
-          <Typography variant="h4" fontWeight={800} gutterBottom>
+          <Typography variant="h4" fontWeight={800} sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
             Contact Us
           </Typography>
           <Typography variant="body1" sx={{ opacity: 0.9, maxWidth: 560, lineHeight: 1.8 }}>

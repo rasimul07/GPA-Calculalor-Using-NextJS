@@ -32,7 +32,7 @@ const WhatsAppStickyButton = () => {
         aria-label="Chat on WhatsApp"
         sx={{
           position: 'fixed',
-          bottom: { xs: 20, md: 28 },
+          bottom: { xs: 'calc(20px + env(safe-area-inset-bottom, 0px))', md: 28 },
           right: { xs: 16, md: 24 },
           zIndex: 1200,
           bgcolor: '#25D366',

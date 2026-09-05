@@ -130,14 +130,15 @@ const FindYgpa = ({ email, setEmail }) => {
             <Box>
                 <Typography textAlign={"center"}
                     variant="h4"
+                    className="calc-page-title"
                     color={"white"}
                     fontWeight={"bold"}
                     padding={1}
-                    sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+                    sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)', fontSize: { xs: '1.35rem', sm: '1.75rem', md: '2rem' } }}>
                     Find YGPA
                 </Typography>
 
-                <Box className="form-card" sx={{ margin: "1.5rem auto", maxWidth: "800px" }}>
+                <Box className="form-card page-shell" sx={{ margin: { xs: '0.75rem auto', sm: '1.5rem auto' }, maxWidth: "800px" }}>
                     <Stack
                         direction={{ xs: 'column', sm: 'row' }}
                         spacing={2}

@@ -29,13 +29,14 @@ const FindPercentage = () => {
         <Typography
           textAlign={"center"}
           variant="h4"
+          className="calc-page-title"
           color={"white"}
           fontWeight={"bold"}
           padding={2}
-          sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+          sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)', fontSize: { xs: '1.35rem', sm: '1.75rem', md: '2rem' } }}>
           Find Percentage
         </Typography>
-        <Grid container spacing={3} justifyContent="center" sx={{ px: 2 }}>
+        <Grid container spacing={3} justifyContent="center" className="page-shell" sx={{ px: { xs: 1, sm: 2 } }}>
           <Grid
             item
             xs={12}
@@ -402,7 +403,8 @@ const DialogBox = ({ inline = false }) => {
       sx={{
         color: '#423726',
         borderColor: '#C4B5A0',
-        whiteSpace: 'nowrap',
+        whiteSpace: { xs: 'normal', sm: 'nowrap' },
+        fontSize: { xs: '0.8rem', sm: '0.875rem' },
         '&:hover': {
           borderColor: '#754B0F',
           backgroundColor: 'rgba(117, 75, 15, 0.04)',
@@ -424,8 +426,23 @@ const DialogBox = ({ inline = false }) => {
           </Box>
         </Box>
       )}
-      <Dialog onClose={() => { setOpen(false) }} open={open} maxWidth={'md'}>
-        <DialogTitle sx={{ fontSize: { xs: '1rem', md: '1.2rem' } }}>Result of a semester that helps you find full and obtained credit</DialogTitle>
+      <Dialog
+        onClose={() => { setOpen(false) }}
+        open={open}
+        fullWidth
+        maxWidth="md"
+        scroll="body"
+        PaperProps={{
+          sx: {
+            m: { xs: 1, sm: 2 },
+            width: '100%',
+            maxHeight: { xs: '90dvh', sm: 'none' },
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontSize: { xs: '0.95rem', sm: '1.1rem', md: '1.2rem' }, pr: 6 }}>
+          Result of a semester that helps you find full and obtained credit
+        </DialogTitle>
         <DialogContent>
           <img src={myImage.src || myImage} alt="Credit breakdown example" className="responsive_image" style={{ width: '100%', height: 'auto' }}></img>
         </DialogContent>

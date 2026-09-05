@@ -54,7 +54,7 @@ const ResetPasswordPage = () => {
         <Container maxWidth="sm">
           <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1 }}>
             <VpnKeyIcon sx={{ fontSize: 32 }} />
-            <Typography variant="h4" fontWeight={800}>
+            <Typography variant="h4" fontWeight={800} sx={{ fontSize: { xs: '1.35rem', sm: '2rem' } }}>
               Set New Password
             </Typography>
           </Stack>
