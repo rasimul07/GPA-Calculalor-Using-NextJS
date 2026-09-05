@@ -5,8 +5,8 @@
 
 const config = {
   // Public (client-safe — NEXT_PUBLIC_*)
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://gpa.tool.mridev.in',
-  baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '/api',
+  siteUrl: process.env.SITE_URL || 'https://gpa.tool.mridev.in',
+  baseUrl: process.env.BASE_URL || '/api',
   showUnlockCode: process.env.NEXT_PUBLIC_SHOW_UNLOCK_CODE === 'true',
 
   // Server
@@ -14,7 +14,7 @@ const config = {
   port: parseInt(process.env.PORT || '3000', 10),
   isDev: process.env.NODE_ENV !== 'production',
   databaseUrl: process.env.DATABASE,
-  jwtSecret: process.env.JWT_SECRET || 'secretGPA',
+  jwtSecret: process.env.JWT_SECRET,
   bmcWebhookSigningSecret: process.env.BMC_WEBHOOK_SIGNING_SECRET || '',
   premiumUnlockCode: process.env.PREMIUM_UNLOCK_CODE || '',
   contactToEmail: process.env.CONTACT_TO_EMAIL || '',
