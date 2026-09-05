@@ -12,6 +12,10 @@ export const siteConfig = {
     responseTime: 'We usually reply within 24–48 hours',
     description: 'Questions about calculators, GPA store, payments, or account issues',
   },
+  whatsapp: {
+    phone: '919876543210',
+    message: 'Hi! I have a question about the MAKAUT GPA Calculator.',
+  },
   footerLinks: {
     tools: [
       { label: 'Home', href: '/' },

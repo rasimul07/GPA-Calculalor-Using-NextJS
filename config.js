@@ -20,7 +20,7 @@ const config = {
   contactToEmail: process.env.CONTACT_TO_EMAIL || '',
   smtp: {
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587', 10),
+    port: parseInt(process.env.SMTP_PORT || '465', 10),
     user: process.env.SMTP_USER || 'mricoding782@gmail.com',
     pass: process.env.SMTP_PASS || '',
   },

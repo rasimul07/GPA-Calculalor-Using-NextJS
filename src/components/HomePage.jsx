@@ -26,6 +26,7 @@ import { Birch, Cafe_Royale, Corn } from '../Colors';
 import { accentButtonSx } from '../styles/buttonStyles';
 import { homeTools, homeBenefits, gpaStoreFeatures } from '../constants/siteConfig';
 import PaymentOptions from './premium/PaymentOptions';
+import WhatsAppStickyButton from './WhatsAppStickyButton';
 import '../index.css';
 import { forAniPages } from './Appbar';
 
@@ -55,6 +56,7 @@ const HomePage = () => {
       <GpaStoreSection />
       <PaymentSection />
       <ClosingCTA />
+      <WhatsAppStickyButton />
     </Box>
   );
 };
