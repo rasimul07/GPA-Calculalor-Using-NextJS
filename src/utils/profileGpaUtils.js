@@ -1,4 +1,4 @@
-import { calculateDgpa } from './gpaCalculations';
+import { calculateDgpa, getActiveYearLabels, getDgpaFormulaText } from './gpaCalculations';
 
 export function calculateSgpa(obtained, full) {
   const ob = parseFloat(obtained);
@@ -18,7 +18,8 @@ export function getSemesterCount(credits) {
   return credits.length / 2;
 }
 
-export function getCourseYearsFromCredits(credits) {
+export function getCourseYearsFromCredits(credits, isLateralEntry = false) {
+  if (isLateralEntry) return 4;
   const semesters = getSemesterCount(credits);
   if (semesters === 0) return 4;
   return Math.max(1, Math.ceil(semesters / 2));
@@ -110,16 +111,18 @@ export function validateSemesterCredits(credits) {
 export function buildProfileBreakdown(credits, isLateralEntry = false) {
   const safeCredits = credits || [];
   const semesterCount = getSemesterCount(safeCredits);
-  const courseYears = getCourseYearsFromCredits(safeCredits);
+  const courseYears = getCourseYearsFromCredits(safeCredits, isLateralEntry);
+  const yearLabels = getActiveYearLabels(courseYears, isLateralEntry);
 
   const semesters = [];
   for (let s = 0; s < semesterCount; s++) {
     const obtained = safeCredits[s * 2] ?? '';
     const full = safeCredits[s * 2 + 1] ?? '';
     const sgpa = calculateSgpa(obtained, full);
+    const year = isLateralEntry ? Math.floor(s / 2) + 2 : Math.ceil((s + 1) / 2);
     semesters.push({
       semester: s + 1,
-      year: Math.ceil((s + 1) / 2),
+      year,
       obtained,
       full,
       sgpa,
@@ -129,7 +132,7 @@ export function buildProfileBreakdown(credits, isLateralEntry = false) {
 
   const ygpaValues = calculateYgpasFromSemesterCredits(safeCredits);
   const years = ygpaValues.map((ygpa, index) => ({
-    year: index + 1,
+    year: yearLabels[index] ?? index + 1,
     ygpa,
     percentage: sgpaToPercentage(ygpa),
   }));
@@ -149,5 +152,7 @@ export function buildProfileBreakdown(credits, isLateralEntry = false) {
     overallPercentage,
     courseYears,
     semesterCount,
+    isLateralEntry,
+    dgpaFormula: getDgpaFormulaText(courseYears, isLateralEntry),
   };
 }

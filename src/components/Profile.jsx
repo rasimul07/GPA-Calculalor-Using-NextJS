@@ -47,6 +47,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [isLateralEntry, setIsLateralEntry] = useState(false);
 
   const { showSuccessModal, dismissAndReload } = usePremiumUnlockSocket({
     enabled: !loading && !isPremium,
@@ -66,7 +67,15 @@ const Profile = () => {
       });
 
       if (response.data) {
-        const { userId, firstName: fn, lastName: ln, credits: cr, breakdown: bd, isPremium: premium } = response.data;
+        const {
+          userId,
+          firstName: fn,
+          lastName: ln,
+          credits: cr,
+          breakdown: bd,
+          isPremium: premium,
+          isLateralEntry: lateral,
+        } = response.data;
 
         if (urlUserId && userId && urlUserId !== userId) {
           router.replace(`/${userId}`);
@@ -79,6 +88,7 @@ const Profile = () => {
         setLastName(ln || '');
         setCredits(cr || []);
         setBreakdown(bd || emptyBreakdown);
+        setIsLateralEntry(Boolean(lateral));
       }
     } catch (error) {
       console.error('Profile fetch error:', error);
@@ -97,6 +107,9 @@ const Profile = () => {
   const handleSaved = (data) => {
     setCredits(data.credits || []);
     setBreakdown(data.breakdown || emptyBreakdown);
+    if (typeof data.isLateralEntry === 'boolean') {
+      setIsLateralEntry(data.isLateralEntry);
+    }
     if (data.firstName) setFirstName(data.firstName);
     if (data.lastName) setLastName(data.lastName);
   };
@@ -159,6 +172,11 @@ const Profile = () => {
         ) : hasCredits ? (
           <Stack spacing={4}>
             <ProfileSummaryCards breakdown={breakdown} />
+            {breakdown.isLateralEntry && breakdown.dgpaFormula && (
+              <Typography variant="body2" color="text.secondary" textAlign="center">
+                DGPA formula: {breakdown.dgpaFormula}
+              </Typography>
+            )}
             <SemesterBreakdownTable semesters={breakdown.semesters} />
             <YearBreakdownTable years={breakdown.years} />
           </Stack>
@@ -199,6 +217,7 @@ const Profile = () => {
         open={drawerOpen && isPremium}
         onClose={() => setDrawerOpen(false)}
         initialCredits={credits}
+        initialIsLateralEntry={isLateralEntry}
         hasExistingCredits={hasCredits}
         onSaved={handleSaved}
       />

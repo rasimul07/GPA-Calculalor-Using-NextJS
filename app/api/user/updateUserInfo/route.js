@@ -40,13 +40,17 @@ export async function PUT(req) {
     }
 
     const isPremium = Boolean(user.isPremium);
+    const isLateralEntry = Boolean(user.isLateralEntry);
     const userCredits = isPremium ? (user.credits || []) : [];
-    const breakdown = isPremium ? buildProfileBreakdown(userCredits) : buildProfileBreakdown([]);
+    const breakdown = isPremium
+      ? buildProfileBreakdown(userCredits, isLateralEntry)
+      : buildProfileBreakdown([]);
 
     return NextResponse.json({
       massage: 'saved successfully',
       userId: user._id.toString(),
       isPremium,
+      isLateralEntry,
       credits: userCredits,
       breakdown,
     }, { status: 200 });

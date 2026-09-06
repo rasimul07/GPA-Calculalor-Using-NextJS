@@ -20,8 +20,11 @@ export async function GET(req) {
     }
 
     const isPremium = Boolean(user.isPremium);
+    const isLateralEntry = Boolean(user.isLateralEntry);
     const credits = isPremium ? (user.credits || []) : [];
-    const breakdown = isPremium ? buildProfileBreakdown(credits) : buildProfileBreakdown([]);
+    const breakdown = isPremium
+      ? buildProfileBreakdown(credits, isLateralEntry)
+      : buildProfileBreakdown([]);
 
     return NextResponse.json({
       _id: user._id.toString(),
@@ -31,6 +34,7 @@ export async function GET(req) {
       contact: user.contact || '',
       email: user.email,
       isPremium,
+      isLateralEntry,
       credits,
       breakdown,
       requiresPremium: !isPremium,

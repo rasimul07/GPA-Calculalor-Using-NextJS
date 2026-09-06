@@ -23,14 +23,18 @@ export async function GET(req) {
     }
 
     const isPremium = Boolean(user.isPremium);
+    const isLateralEntry = Boolean(user.isLateralEntry);
     const credits = isPremium ? (user.credits || []) : [];
-    const breakdown = isPremium ? buildProfileBreakdown(credits) : buildProfileBreakdown([]);
+    const breakdown = isPremium
+      ? buildProfileBreakdown(credits, isLateralEntry)
+      : buildProfileBreakdown([]);
 
     return NextResponse.json({
       userId: user._id.toString(),
       firstName: user.firstName || '',
       lastName: user.lastName || '',
       isPremium,
+      isLateralEntry,
       credits,
       breakdown,
       requiresPremium: !isPremium,
@@ -56,7 +60,7 @@ export async function PUT(req) {
     }
 
     const body = await req.json();
-    const { credits } = body;
+    const { credits, isLateralEntry } = body;
 
     if (!Array.isArray(credits)) {
       return NextResponse.json({ message: 'Credits must be an array' }, { status: 400 });
@@ -68,9 +72,12 @@ export async function PUT(req) {
     }
 
     user.credits = credits.map((value) => String(value));
+    if (typeof isLateralEntry === 'boolean') {
+      user.isLateralEntry = isLateralEntry;
+    }
     await user.save();
 
-    const breakdown = buildProfileBreakdown(user.credits);
+    const breakdown = buildProfileBreakdown(user.credits, Boolean(user.isLateralEntry));
 
     return NextResponse.json({
       message: 'Credits saved successfully',
@@ -78,6 +85,7 @@ export async function PUT(req) {
       firstName: user.firstName || '',
       lastName: user.lastName || '',
       isPremium: true,
+      isLateralEntry: Boolean(user.isLateralEntry),
       credits: user.credits,
       breakdown,
     }, { status: 200 });

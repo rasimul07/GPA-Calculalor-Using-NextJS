@@ -1,9 +1,10 @@
 'use client';
-import React, { useState } from "react";
-import { Button, Grid, Typography, Checkbox, MenuItem } from "@mui/material";
+import React, { useState, useMemo } from "react";
+import { Button, Grid, Typography, Checkbox, MenuItem, FormControlLabel } from "@mui/material";
 import { Box } from "@mui/material";
 import { Mauntain_Mist, Cafe_Royale } from "../Colors";
 import { AppTextField, AppSelect } from "./common";
+import { getActiveYearLabels, getActiveYearCount } from "../utils/gpaCalculations";
 
 const GpaEquator = () => {
   const maxYears = 5;
@@ -11,61 +12,71 @@ const GpaEquator = () => {
     .fill()
     .map((_, index) => index + 1);
   const [numOfYear, setNumOfYear] = useState(4);
-  const maxArrayOfPassoutYears = new Array(numOfYear - 1)
-    .fill()
-    .map((_, index) => index + 1);
-  const [arrayOfYear, setArrayOfYear] = useState(
-    new Array(numOfYear).fill().map((_, index) => index + 1)
-  );
   const [isLateralEntry, setIsLateralEntry] = useState(false);
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [numOfPassoutYear, setNumOfPassoutYear] = useState(3);
-  const [arrayOfPassOutYears, setArrayOfPassOutYears] = useState(
-    new Array(numOfYear - 1).fill().map((_, index) => index + 1)
-  );
-
-  const [yearValues, setYearValues] = useState(new Array(numOfYear).fill(""));
-  const [validValues, setValidValues] = useState(
-    new Array(numOfPassoutYear).fill(true)
-  );
-  const [isVisited, setIsVisited] = useState(
-    new Array(numOfPassoutYear).fill(false)
-  );
-  const [checkedBeforeSubmit, setCheckedBeforeSubmit] = useState(
-    new Array(numOfYear).fill(true)
-  );
+  const [yearValues, setYearValues] = useState(new Array(4).fill(""));
+  const [validValues, setValidValues] = useState(new Array(3).fill(true));
+  const [isVisited, setIsVisited] = useState(new Array(3).fill(false));
+  const [checkedBeforeSubmit, setCheckedBeforeSubmit] = useState(new Array(4).fill(true));
   const [targetDGPA, setTargetDGPA] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  const handleChange1 = (event) => {
-    const curr = event.target.value;
-    setNumOfYear(curr);
-    setArrayOfYear(new Array(curr).fill().map((_, index) => index + 1));
-    setNumOfPassoutYear(curr - 1);
-    setArrayOfPassOutYears(
-      new Array(curr - 1).fill().map((_, index) => index + 1)
-    );
+  const lateralActive = numOfYear === 4 && isLateralEntry;
+  const activeYearCount = getActiveYearCount(Number(numOfYear), lateralActive);
+  const yearLabels = useMemo(
+    () => getActiveYearLabels(Number(numOfYear), lateralActive),
+    [numOfYear, lateralActive]
+  );
+  const maxPassoutYears = Math.max(1, activeYearCount - 1);
+  const passoutYearOptions = useMemo(
+    () => Array.from({ length: maxPassoutYears }, (_, i) => i + 1),
+    [maxPassoutYears]
+  );
+
+  const resizeYearValues = (count) => {
     const temp = [...yearValues];
-    let count =
-      curr > yearValues.length
-        ? curr - yearValues.length
-        : yearValues.length - curr;
-    while (count) {
-      if (curr > yearValues.length) {
-        temp.push("");
-      } else {
-        temp.pop();
-      }
-      count = count - 1;
-    }
+    while (temp.length < count) temp.push("");
+    while (temp.length > count) temp.pop();
     setYearValues(temp);
-    setValidValues(new Array(curr - 1).fill(true));
+    setCheckedBeforeSubmit(new Array(count).fill(true));
+  };
+
+  const handleChange1 = (event) => {
+    const curr = Number(event.target.value);
+    setNumOfYear(curr);
+    if (curr !== 4) setIsLateralEntry(false);
+
+    const lateral = curr === 4 && isLateralEntry;
+    const count = getActiveYearCount(curr, lateral);
+    resizeYearValues(count);
+
+    const maxPassout = Math.max(1, count - 1);
+    const nextPassout = Math.min(numOfPassoutYear, maxPassout);
+    setNumOfPassoutYear(nextPassout);
+    setValidValues(new Array(maxPassout).fill(true));
+    setIsVisited(new Array(maxPassout).fill(false));
+    setFormSubmitted(false);
+  };
+
+  const handleLateralChange = (event) => {
+    const checked = event.target.checked;
+    setIsLateralEntry(checked);
+    setFormSubmitted(false);
+
+    const count = getActiveYearCount(Number(numOfYear), numOfYear === 4 && checked);
+    resizeYearValues(count);
+
+    const maxPassout = Math.max(1, count - 1);
+    const nextPassout = Math.min(numOfPassoutYear, maxPassout);
+    setNumOfPassoutYear(nextPassout);
+    setValidValues(new Array(maxPassout).fill(true));
+    setIsVisited(new Array(maxPassout).fill(false));
   };
 
   const handleChange2 = (event) => {
-    const curr = event.target.value;
+    const curr = Number(event.target.value);
     setNumOfPassoutYear(curr);
-    setArrayOfPassOutYears(new Array(curr).fill().map((_, index) => index + 1));
+    setFormSubmitted(false);
   };
 
   const passoutHandler = (index) => {
@@ -158,15 +169,38 @@ const GpaEquator = () => {
       if (
         numOfYear === 5 ||
         numOfYear === 2 ||
-        (numOfYear === 3 && isLateralEntry === false)
+        numOfYear === 3
       ) {
         for (let i = 0; i < numOfPassoutYear; i++) {
           sum += parseFloat(temp[i]);
         }
         const tempMul = numOfYear * parseFloat(targetDGPA);
         ans = (tempMul - sum) / (numOfYear - numOfPassoutYear);
-        for (let i = numOfPassoutYear; i < numOfYear; i++) {
+        for (let i = numOfPassoutYear; i < activeYearCount; i++) {
           temp[i] = String(ans.toFixed(2));
+        }
+      } else if (numOfYear === 4 && isLateralEntry) {
+        const tempMul = 4 * parseFloat(targetDGPA);
+        for (let i = 0; i < numOfPassoutYear; i++) {
+          if (i > 0) {
+            sum += 1.5 * parseFloat(temp[i]);
+          } else {
+            sum += parseFloat(temp[i]);
+          }
+        }
+        const remaining = activeYearCount - numOfPassoutYear;
+        if (remaining === 1) {
+          ans = (tempMul - sum) / 1.5;
+        } else {
+          ans = (tempMul - sum) / 3;
+        }
+        for (let i = numOfPassoutYear; i < activeYearCount; i++) {
+          temp[i] = String(ans.toFixed(2));
+        }
+        if (ans > 10) {
+          alert(
+            "Target DGPA is mathematically unreachable. Required YGPA exceeds 10."
+          );
         }
       } else if (numOfYear === 4) {
         const tempMul = (numOfYear + 1) * parseFloat(targetDGPA);
@@ -184,29 +218,7 @@ const GpaEquator = () => {
         } else {
           ans = (tempMul - sum) / 4;
         }
-        for (let i = numOfPassoutYear; i < numOfYear; i++) {
-          temp[i] = String(ans.toFixed(2));
-        }
-        if (ans > 10) {
-          alert(
-            "Target DGPA is mathematically unreachable. Required YGPA exceeds 10."
-          );
-        }
-      } else {
-        const tempMul = (numOfYear + 1) * parseFloat(targetDGPA);
-        for (let i = 0; i < numOfPassoutYear; i++) {
-          if (i > 0) {
-            sum += 1.5 * parseFloat(temp[i]);
-          } else {
-            sum += parseFloat(temp[i]);
-          }
-        }
-        if (numOfYear - numOfPassoutYear === 1) {
-          ans = (tempMul - sum) / 1.5;
-        } else {
-          ans = (tempMul - sum) / 3;
-        }
-        for (let i = numOfPassoutYear; i < numOfYear; i++) {
+        for (let i = numOfPassoutYear; i < activeYearCount; i++) {
           temp[i] = String(ans.toFixed(2));
         }
         if (ans > 10) {
@@ -309,7 +321,7 @@ const GpaEquator = () => {
                   value={numOfPassoutYear}
                   onChange={handleChange2}
                 >
-                    {maxArrayOfPassoutYears.map((v) => (
+                    {passoutYearOptions.map((v) => (
                       <MenuItem key={v} value={v}>{v} Year(s)</MenuItem>
                     ))}
                 </AppSelect>
@@ -366,29 +378,18 @@ const GpaEquator = () => {
                   }
                 />
               </Grid>
-              {numOfYear === 3 ? (
-                <>
-                  <Grid
-                    item
-                    xs={6}
-                    sm={2}>
-                    <Typography color={Mauntain_Mist} fontWeight="500">
-                      Lateral Entry:
-                    </Typography>
-                  </Grid>
-
-                  <Grid
-                    item
-                    xs={6}
-                    sm={2}>
-                    <Checkbox
-                      {...label}
-                      onChange={(e) => {
-                        setIsLateralEntry(e.target.checked);
-                      }}
-                    />
-                  </Grid>
-                </>
+              {numOfYear === 4 ? (
+                <Grid item xs={12} sm={4} md={5}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={isLateralEntry}
+                        onChange={handleLateralChange}
+                      />
+                    }
+                    label="Lateral Entry (Years 2–4)"
+                  />
+                </Grid>
               ) : null}
             </Grid>
             <Box
@@ -403,10 +404,10 @@ const GpaEquator = () => {
             <Grid
               container
               spacing={2}>
-              {arrayOfYear.map((item, index) => (
-                <Grid item key={item} xs={6} sm={4} md={3}>
+              {yearLabels.map((yearNum, index) => (
+                <Grid item key={yearNum} xs={6} sm={4} md={3}>
                   <AppTextField
-                    label={`Year ${item}`}
+                    label={`Year ${yearNum}`}
                     value={yearValues[index] || ""}
                     required={passoutHandler(index)}
                     placeholder={

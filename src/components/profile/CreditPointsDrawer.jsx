@@ -11,6 +11,8 @@ import {
   MenuItem,
   Alert,
   CircularProgress,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
@@ -21,9 +23,17 @@ import { AppTextField, AppSelect } from '../common';
 import { DialogBox } from '../FindPercentage';
 import { Cafe_Royale, Birch, Mauntain_Mist } from '../../Colors';
 
-const CreditPointsDrawer = ({ open, onClose, initialCredits, hasExistingCredits, onSaved }) => {
+const CreditPointsDrawer = ({
+  open,
+  onClose,
+  initialCredits,
+  initialIsLateralEntry = false,
+  hasExistingCredits,
+  onSaved,
+}) => {
   const [numOfSemester, setNumOfSemester] = useState(1);
   const [creditValues, setCreditValues] = useState(['', '']);
+  const [isLateralEntry, setIsLateralEntry] = useState(false);
   const [isVisited, setIsVisited] = useState([]);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
@@ -38,9 +48,10 @@ const CreditPointsDrawer = ({ open, onClose, initialCredits, hasExistingCredits,
     const semCount = credits.length / 2 || 1;
     setNumOfSemester(semCount);
     setCreditValues(credits);
+    setIsLateralEntry(Boolean(initialIsLateralEntry));
     setIsVisited(new Array(semCount * 2).fill(false));
     setError('');
-  }, [open, initialCredits]);
+  }, [open, initialCredits, initialIsLateralEntry]);
 
   const handleSemesterChange = (e) => {
     const count = Number(e.target.value);
@@ -75,7 +86,7 @@ const CreditPointsDrawer = ({ open, onClose, initialCredits, hasExistingCredits,
       const token = localStorage.getItem('token');
       const response = await axios.put(
         `${BASE_URL}/user/credits`,
-        { credits: creditValues },
+        { credits: creditValues, isLateralEntry },
         { headers: { authorization: `Bearer ${token}` } }
       );
 
@@ -153,6 +164,22 @@ const CreditPointsDrawer = ({ open, onClose, initialCredits, hasExistingCredits,
           </AppSelect>
           <DialogBox inline />
         </Box>
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isLateralEntry}
+              onChange={(e) => setIsLateralEntry(e.target.checked)}
+            />
+          }
+          label="Lateral Entry (4-year program — Years 2, 3, 4 only)"
+          sx={{ mb: 1, display: 'block' }}
+        />
+        {isLateralEntry && (
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Enter credits for Years 2–4 only (typically 6 semesters).
+          </Typography>
+        )}
 
         <Divider sx={{ mb: 2 }} />
 

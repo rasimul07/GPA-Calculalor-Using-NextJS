@@ -39,6 +39,11 @@ const ProfileSummaryCards = ({ breakdown }) => {
               <Typography variant="h5" fontWeight={700} color={Birch}>
                 {isCount ? breakdown[key] : `${breakdown[key]}${suffix}`}
               </Typography>
+              {key === 'dgpa' && breakdown.isLateralEntry && breakdown.dgpaFormula && (
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                  Lateral entry
+                </Typography>
+              )}
             </CardContent>
           </Card>
         </Grid>
