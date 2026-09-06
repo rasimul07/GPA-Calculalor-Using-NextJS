@@ -9,6 +9,7 @@ import "../index.css";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
 import { AppTextField, AppSelect } from "./common";
+import { calculateYgpaFromYearCredits } from "../utils/gpaCalculations";
 
 const FindYgpa = ({ email, setEmail }) => {
     const [userInfo, setUserInfo] = useState({});
@@ -103,17 +104,8 @@ const FindYgpa = ({ email, setEmail }) => {
             });
             setCheckedBeforeSubmit(temp);
         } else {
-            let obcredit = 0;
-            let total_full_credit = 0;
-            creditValuesForYgpa.forEach((value, index) => {
-                if (index % 2 === 0) {
-                    obcredit = obcredit + parseFloat(value);
-                } else {
-                    total_full_credit = total_full_credit + parseFloat(value);
-                }
-            });
-            const calcYgpa = (obcredit / total_full_credit);
-            setYgpa(calcYgpa.toFixed(2));
+            const calcYgpa = calculateYgpaFromYearCredits(creditValuesForYgpa);
+            setYgpa(calcYgpa);
             setFormSubmitted(true);
         }
     };

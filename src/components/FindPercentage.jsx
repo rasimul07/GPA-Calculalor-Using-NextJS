@@ -11,6 +11,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from '@mui/material/DialogContent';
 import "../responsiveImage.css";
 import { AppTextField, AppSelect } from "./common";
+import { sgpaToPercentage, calculateOverallPercentageFromCredits } from "../utils/profileGpaUtils";
 
 const FindPercentage = () => {
   const [formType, setFormType] = useState(1);
@@ -97,9 +98,8 @@ const CustomForm = ({ formType }) => {
     return <SgpaToPercentage></SgpaToPercentage>;
   } else if (formType === 2) {
     return <CreditPointToPercentage></CreditPointToPercentage>;
-  } else {
-    return <Typography sx={{ p: 2 }}>Service is coming soon</Typography>;
   }
+  return <YgpaToPercentage></YgpaToPercentage>;
 };
 
 const CreditPointToPercentage = () => {
@@ -164,17 +164,8 @@ const CreditPointToPercentage = () => {
       });
       setCheckedBeforeSubmit(temp);
     } else {
-      let obcredit = 0;
-      let total_full_credit = 0;
-      creditValues.forEach((value, index) => {
-        if (index % 2 === 0) {
-          obcredit = obcredit + parseFloat(value);
-        } else {
-          total_full_credit = total_full_credit + parseFloat(value);
-        }
-      });
-      const per = (obcredit / (total_full_credit * 10)) * 100;
-      setPercentage(per.toFixed(2));
+      const per = calculateOverallPercentageFromCredits(creditValues);
+      setPercentage(per);
       setFormSubmitted(true);
     }
   };
@@ -356,16 +347,135 @@ const SgpaToPercentage = () => {
   );
 };
 
-const CustomFormControl = ({ numOfSemester, handleChange }) => {
+const YgpaToPercentage = () => {
+  const [numOfYear, setNumOfYear] = useState(1);
+  const [arrayOfYears, setArrayOfYears] = useState([1]);
+  const [yearValues, setYearValues] = useState([""]);
+  const [isVisited, setIsVisited] = useState([false]);
+  const [checkedBeforeSubmit, setCheckedBeforeSubmit] = useState([true]);
+  const [percentage, setPercentage] = useState("");
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  const handleChange = (event) => {
+    const curr = event.target.value;
+    setNumOfYear(curr);
+    setArrayOfYears(new Array(curr).fill().map((_, index) => index + 1));
+    const temp = [...yearValues];
+    let count =
+      curr > yearValues.length
+        ? curr - yearValues.length
+        : yearValues.length - curr;
+    while (count) {
+      if (curr > yearValues.length) {
+        temp.push("");
+      } else {
+        temp.pop();
+      }
+      count = count - 1;
+    }
+    setYearValues(temp);
+    setIsVisited(new Array(curr).fill(false));
+    setCheckedBeforeSubmit(new Array(curr).fill(true));
+    setFormSubmitted(false);
+  };
+
+  const isVisitedHandler = (index) => {
+    const temp = [...isVisited];
+    temp[index] = true;
+    setIsVisited(temp);
+  };
+
+  const handleValueChange = (index, value) => {
+    const newTextValues = [...yearValues];
+    newTextValues[index] = value;
+    setYearValues(newTextValues);
+  };
+
+  const handleSubmit = () => {
+    if (yearValues.some((value) => value === "")) {
+      alert("Please fill in all fields before submitting.");
+      const temp = [...checkedBeforeSubmit];
+      yearValues.forEach((value, index) => {
+        if (value === "") {
+          temp[index] = false;
+        }
+      });
+      setCheckedBeforeSubmit(temp);
+    } else if (
+      yearValues.some((value) => parseFloat(value) > 10 || parseFloat(value) < 0)
+    ) {
+      alert(
+        "Some values are invalid. YGPAs should not be greater than 10 or less than 0."
+      );
+    } else {
+      const sum = yearValues.reduce((accumulator, currentValue) => {
+        return accumulator + parseFloat(currentValue);
+      }, 0);
+      const avgYgpa = sum / numOfYear;
+      setPercentage(sgpaToPercentage(avgYgpa));
+      setFormSubmitted(true);
+    }
+  };
+
+  return (
+    <Box>
+      <CustomFormControl
+        numOfSemester={numOfYear}
+        handleChange={handleChange}
+        label="No of years"
+        options={[1, 2, 3, 4, 5]}
+        labelId="select-no-of-years-label"
+      />
+      <Box>
+        <Grid container spacing={2}>
+          {arrayOfYears.map((item, index) => (
+            <Grid key={item} item xs={6} md={6}>
+              <AppTextField
+                required
+                label={`Year ${item}`}
+                value={yearValues[index] || ""}
+                error={
+                  yearValues[index] === "" && isVisited[index]
+                }
+                onFocus={() => isVisitedHandler(index)}
+                helperText={
+                  yearValues[index] === "" && isVisited[index]
+                    ? "Required field"
+                    : "Enter YGPA"
+                }
+                placeholder="Enter YGPA"
+                type="number"
+                onChange={(e) =>
+                  handleValueChange(index, e.target.value)
+                } />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+      <FindPercentageButton handleSubmit={handleSubmit}></FindPercentageButton>
+      <ShowPercentage
+        formSubmitted={formSubmitted}
+        percentage={percentage}></ShowPercentage>
+    </Box>
+  );
+};
+
+const CustomFormControl = ({
+  numOfSemester,
+  handleChange,
+  label = "No of sems",
+  options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  labelId = "select-no-of-sems-label",
+}) => {
   return (
     <AppSelect
-      label="No of sems"
-      labelId="select-no-of-sems-label"
+      label={label}
+      labelId={labelId}
       value={numOfSemester}
       onChange={handleChange}
       sx={{ mb: 3 }}
     >
-      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
+      {options.map((n) => (
         <MenuItem key={n} value={n}>{n}</MenuItem>
       ))}
     </AppSelect>

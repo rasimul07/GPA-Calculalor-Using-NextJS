@@ -5,6 +5,7 @@ import { Box } from "@mui/material";
 import { Mauntain_Mist, Corn, Cafe_Royale } from "../Colors";
 import { DialogBox } from "./FindPercentage";
 import { AppTextField } from "./common";
+import { calculateSgpa } from "../utils/profileGpaUtils";
 
 const FindSgpa = () => {
     const [sgpa, setSgpa] = useState(null);
@@ -42,8 +43,8 @@ const FindSgpa = () => {
             });
             setCheckedBeforeSubmit(temp);
         } else {
-            const ans = (parseFloat(creditValuesForSgpa[0]) / parseFloat(creditValuesForSgpa[1]));
-            setSgpa(ans.toFixed(2));
+            const ans = calculateSgpa(creditValuesForSgpa[0], creditValuesForSgpa[1]);
+            setSgpa(ans);
             setFormSubmitted(true);
         }
     };

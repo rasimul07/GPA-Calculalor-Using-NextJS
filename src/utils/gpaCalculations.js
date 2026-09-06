@@ -17,8 +17,8 @@ export function calculateYgpaFromYearCredits(fourCredits) {
     }
   });
 
-  if (full <= 0) return '0.00';
-  return (obtained / full).toFixed(2);
+  if (obtained <= 0) return '0.00';
+  return (full / obtained).toFixed(2);
 }
 
 /**
@@ -109,7 +109,7 @@ export function calculateDgpa(ygpas, courseYears, isLateralEntry = false) {
 }
 
 /**
- * Validate all credit fields are filled and numeric with full > 0
+ * Validate all credit fields are filled and numeric with obtained > 0 and full > 0
  */
 export function validateCredits(credits) {
   if (!credits || credits.length === 0) {
@@ -123,6 +123,9 @@ export function validateCredits(credits) {
     const num = parseFloat(credits[i]);
     if (Number.isNaN(num) || num < 0) {
       return { valid: false, message: 'Credit values must be valid numbers.' };
+    }
+    if (i % 2 === 0 && num <= 0) {
+      return { valid: false, message: 'Obtained credit must be greater than zero.' };
     }
     if (i % 2 === 1 && num <= 0) {
       return { valid: false, message: 'Full credit must be greater than zero.' };

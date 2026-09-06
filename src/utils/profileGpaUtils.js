@@ -3,8 +3,8 @@ import { calculateDgpa } from './gpaCalculations';
 export function calculateSgpa(obtained, full) {
   const ob = parseFloat(obtained);
   const fl = parseFloat(full);
-  if (!fl || fl <= 0 || Number.isNaN(ob) || Number.isNaN(fl)) return '0.00';
-  return (ob / fl).toFixed(2);
+  if (!ob || ob <= 0 || Number.isNaN(ob) || Number.isNaN(fl)) return '0.00';
+  return (fl / ob).toFixed(2);
 }
 
 export function sgpaToPercentage(sgpa) {
@@ -42,7 +42,7 @@ export function calculateYgpasFromSemesterCredits(credits) {
       }
     }
 
-    ygpas.push(full > 0 ? (obtained / full).toFixed(2) : '0.00');
+    ygpas.push(obtained > 0 ? (full / obtained).toFixed(2) : '0.00');
   }
 
   return ygpas;
@@ -59,8 +59,8 @@ export function calculateCgpaFromCredits(credits) {
     full += parseFloat(credits[i + 1] || 0);
   }
 
-  if (full <= 0) return '0.00';
-  return (obtained / full).toFixed(2);
+  if (obtained <= 0) return '0.00';
+  return (full / obtained).toFixed(2);
 }
 
 export function calculateOverallPercentageFromCredits(credits) {
@@ -74,8 +74,8 @@ export function calculateOverallPercentageFromCredits(credits) {
     full += parseFloat(credits[i + 1] || 0);
   }
 
-  if (full <= 0) return '0.00';
-  return ((obtained / (full * 10)) * 100).toFixed(2);
+  if (obtained <= 0) return '0.00';
+  return ((full / (obtained * 10)) * 100).toFixed(2);
 }
 
 export function validateSemesterCredits(credits) {
@@ -95,6 +95,9 @@ export function validateSemesterCredits(credits) {
     const num = parseFloat(value);
     if (Number.isNaN(num) || num < 0) {
       return { valid: false, message: 'Credit values must be valid numbers.' };
+    }
+    if (i % 2 === 0 && num <= 0) {
+      return { valid: false, message: 'Obtained credit must be greater than zero.' };
     }
     if (i % 2 === 1 && num <= 0) {
       return { valid: false, message: 'Full credit must be greater than zero.' };
