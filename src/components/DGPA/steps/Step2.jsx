@@ -2,15 +2,11 @@
 import React, { useState } from "react";
 import { Button, Grid, Typography, Divider, Stack, Card } from "@mui/material";
 import { Box } from "@mui/material";
-import axios from "axios";
 import { Mauntain_Mist } from "../../../Colors";
 import { DialogBox } from "../../FindPercentage";
-import { AppTextField } from "../../common";
+import { AppTextField, ProfileDataButton } from "../../common";
 import { useDGPA } from "../../../context/dgpaContext.jsx";
-import { BASE_URL } from "../../../services/helper";
-import {
-  getActiveYearLabels,
-} from "../../../utils/gpaCalculations";
+import { getActiveYearLabels } from "../../../utils/gpaCalculations";
 
 const Step2 = ({ onValidationError }) => {
   const {
@@ -20,6 +16,7 @@ const Step2 = ({ onValidationError }) => {
     setCreditValues,
     ygpas,
     computeAndStoreYgpas,
+    loadFromProfile,
   } = useDGPA();
 
   const [isVisited, setIsVisited] = useState(
@@ -35,43 +32,9 @@ const Step2 = ({ onValidationError }) => {
     setCreditValues(temp);
   };
 
-  const isVisitedHandler = (index) => {
-    const temp = [...isVisited];
-    temp[index] = true;
-    setIsVisited(temp);
-  };
-
-  const handleFetchProfile = async () => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    if (!token || token === "null") {
-      onValidationError?.("Login required to fetch profile data.");
-      return;
-    }
-
-    try {
-      const response = await axios.get(`${BASE_URL}/user/getUserInfo`, {
-        headers: { authorization: "Bearer " + token },
-      });
-
-      if (response.data?.isPremium === false) {
-        onValidationError?.("Premium required to use profile data. Unlock the GPA store from your profile or home page.");
-        return;
-      }
-
-      if (response.data?.credits?.length) {
-        const credits = response.data.credits;
-        const needed = creditValues.length;
-        const sliceStart = courseYears === 4 && isLateralEntry ? 4 : 0;
-        const sliced = credits.slice(sliceStart, sliceStart + needed);
-        const padded = [...sliced];
-        while (padded.length < needed) padded.push("");
-        setCreditValues(padded.slice(0, needed));
-        onValidationError?.("");
-      }
-    } catch (err) {
-      console.error("Error fetching profile:", err);
-      onValidationError?.("Failed to fetch profile data. Please sign in and try again.");
-    }
+  const handleProfileLoaded = (data) => {
+    loadFromProfile(data);
+    onValidationError?.("");
   };
 
   const handlePreviewYgpas = () => {
@@ -84,6 +47,12 @@ const Step2 = ({ onValidationError }) => {
     setPreviewYgpas([]);
   }, [creditValues.length, courseYears, isLateralEntry]);
 
+  const isVisitedHandler = (index) => {
+    const temp = [...isVisited];
+    temp[index] = true;
+    setIsVisited(temp);
+  };
+
   return (
     <Box sx={{ mt: 2 }}>
       <Stack
@@ -93,18 +62,7 @@ const Step2 = ({ onValidationError }) => {
         justifyContent="center"
         sx={{ mb: 2 }}
       >
-        <Button
-          onClick={handleFetchProfile}
-          variant="outlined"
-          sx={{
-            color: "#423726",
-            borderColor: "#C4B5A0",
-            whiteSpace: "nowrap",
-            "&:hover": { borderColor: "#754B0F", backgroundColor: "rgba(117, 75, 15, 0.04)" },
-          }}
-        >
-          Use Your Profile Data
-        </Button>
+        <ProfileDataButton onLoaded={handleProfileLoaded} onError={onValidationError} />
         <DialogBox inline />
       </Stack>
 

@@ -3,15 +3,13 @@ import React, { useState } from "react";
 import { Button, Grid, Typography, Card, Divider, Stack } from "@mui/material";
 import { Box } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
-import { Mauntain_Mist, Corn, Cafe_Royale } from "../Colors";
+import { Mauntain_Mist } from "../Colors";
 import { DialogBox } from "./FindPercentage";
 import "../index.css";
-import axios from "axios";
-import { BASE_URL } from "../services/helper";
-import { AppTextField, AppSelect } from "./common";
+import { AppTextField, AppSelect, ProfileDataButton } from "./common";
 import { calculateYgpaFromYearCredits } from "../utils/gpaCalculations";
 
-const FindYgpa = ({ email, setEmail }) => {
+const FindYgpa = () => {
     const [userInfo, setUserInfo] = useState({});
     const [whichYear, setWhichYear] = useState(1);
     const [arrayOfYears, setArrayOfYears] = useState([1]);
@@ -31,48 +29,29 @@ const FindYgpa = ({ email, setEmail }) => {
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [ygpa, setYgpa] = useState(null);
 
-    const handleFetchData = () => {
-        const func = async () => {
-            const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
-            if (!token || token === 'null') {
-                alert("Login required to fetch profile data");
-                return;
-            }
-            try {
-                const response = await axios.get(`${BASE_URL}/user/getUserInfo`, {
-                    headers: {
-                        authorization: "Bearer " + token
-                    }
-                });
-                if (response.data) {
-                    if (!response.data.isPremium) {
-                        alert("Premium required to use profile data. Unlock the GPA store from your profile or home page.");
-                        return;
-                    }
-                    setUserInfo(response.data);
-                    const credits = response.data.credits || [];
-                    const noSem = credits.length / 2;
-                    const years = Math.floor(noSem / 2) || 1;
-                    setArrayOfYears(new Array(years).fill().map((_, index) => index + 1));
-                    setArrayOfSems([1, 2]);
-                    if (credits.length >= 4) {
-                        setCreditValuesForYgpa(credits.slice(0, 4));
-                    }
-                    setIsLogin(true);
-                }
-            } catch (err) {
-                console.error("Error fetching user data:", err);
-                alert("Failed to fetch profile data. Please make sure you are signed in.");
-            }
-        };
-        func();
+    const handleProfileLoaded = (data) => {
+        setUserInfo(data);
+        const credits = data.credits || [];
+        const breakdownYears = data.breakdown?.years || [];
+        const years = breakdownYears.length
+            ? breakdownYears.map((row) => row.year)
+            : new Array(Math.floor(credits.length / 4) || 1).fill().map((_, index) => index + 1);
+        setArrayOfYears(years);
+        setWhichYear(years[0] ?? 1);
+        setArrayOfSems([years[0] * 2 - 1, years[0] * 2]);
+        if (credits.length >= 4) {
+            setCreditValuesForYgpa(credits.slice(0, 4));
+        }
+        setIsLogin(true);
+        setFormSubmitted(false);
     };
 
     const handleChange = (e) => {
         const curr = e.target.value;
         setWhichYear(curr);
         const credits = userInfo.credits || [];
-        const startInd = (curr - 1) * 4;
+        const yearIndex = arrayOfYears.indexOf(curr);
+        const startInd = yearIndex >= 0 ? yearIndex * 4 : (curr - 1) * 4;
         const temp = [];
         for (let i = startInd; i < startInd + 4; i++) {
             temp.push(credits[i] || "");
@@ -137,21 +116,7 @@ const FindYgpa = ({ email, setEmail }) => {
                         alignItems="center"
                         justifyContent="center"
                     >
-                        <Button
-                            onClick={handleFetchData}
-                            variant="outlined"
-                            sx={{
-                                color: '#423726',
-                                borderColor: '#C4B5A0',
-                                whiteSpace: 'nowrap',
-                                '&:hover': {
-                                    borderColor: '#754B0F',
-                                    backgroundColor: 'rgba(117, 75, 15, 0.04)',
-                                },
-                            }}
-                        >
-                            Use Your Profile Data
-                        </Button>
+                        <ProfileDataButton onLoaded={handleProfileLoaded} />
                         <DialogBox inline />
                     </Stack>
                     <Divider sx={{ my: 2 }}></Divider>

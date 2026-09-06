@@ -1,10 +1,11 @@
 'use client';
 import React, { useState } from "react";
-import { Button, Grid, Typography, Divider, Card } from "@mui/material";
+import { Button, Grid, Typography, Divider, Card, Stack } from "@mui/material";
 import { Box } from "@mui/material";
-import { Mauntain_Mist, Corn, Cafe_Royale } from "../Colors";
+import MenuItem from "@mui/material/MenuItem";
+import { Mauntain_Mist } from "../Colors";
 import { DialogBox } from "./FindPercentage";
-import { AppTextField } from "./common";
+import { AppTextField, AppSelect, ProfileDataButton } from "./common";
 import { calculateSgpa } from "../utils/profileGpaUtils";
 
 const FindSgpa = () => {
@@ -19,6 +20,29 @@ const FindSgpa = () => {
         new Array(2).fill(true)
     );
     const [formSubmitted, setFormSubmitted] = useState(false);
+    const [hasProfileData, setHasProfileData] = useState(false);
+    const [userCredits, setUserCredits] = useState([]);
+    const [whichSemester, setWhichSemester] = useState(1);
+    const [semesterCount, setSemesterCount] = useState(1);
+
+    const handleProfileLoaded = (data) => {
+        const credits = data.credits || [];
+        const count = credits.length / 2;
+        setUserCredits(credits);
+        setSemesterCount(count);
+        setWhichSemester(1);
+        setCreditValuesForSgpa([credits[0] || '', credits[1] || '']);
+        setHasProfileData(true);
+        setFormSubmitted(false);
+    };
+
+    const handleSemesterChange = (e) => {
+        const sem = Number(e.target.value);
+        setWhichSemester(sem);
+        const base = (sem - 1) * 2;
+        setCreditValuesForSgpa([userCredits[base] || '', userCredits[base + 1] || '']);
+        setFormSubmitted(false);
+    };
 
     const handleCreditValues = (index, value) => {
         const temp = [...creditValuesForSgpa];
@@ -72,8 +96,34 @@ const FindSgpa = () => {
                 <Grid container alignItems="center" justifyContent="center" className="page-shell" sx={{ px: { xs: 1, sm: 2 } }}>
                     <Grid item xs={12} md={6} lg={5}>
                         <Box className="form-card" sx={{ margin: "1.5rem 0" }}>
-                            <DialogBox></DialogBox>
+                            <Stack
+                                direction={{ xs: 'column', sm: 'row' }}
+                                spacing={2}
+                                alignItems="center"
+                                justifyContent="center"
+                            >
+                                <ProfileDataButton onLoaded={handleProfileLoaded} />
+                                <DialogBox inline />
+                            </Stack>
                             <Divider sx={{ my: '1.5rem' }}></Divider>
+
+                            {hasProfileData ? (
+                                <Box mb={2}>
+                                    <Typography fontSize="1.1rem" fontWeight="500" mb={1}>
+                                        Select semester to calculate:
+                                    </Typography>
+                                    <AppSelect
+                                        label="Semester"
+                                        labelId="sgpa-semester-select"
+                                        value={whichSemester}
+                                        onChange={handleSemesterChange}
+                                    >
+                                        {Array.from({ length: semesterCount }, (_, i) => i + 1).map((sem) => (
+                                            <MenuItem key={sem} value={sem}>Semester {sem}</MenuItem>
+                                        ))}
+                                    </AppSelect>
+                                </Box>
+                            ) : null}
 
                             <Typography variant="h6" color={Mauntain_Mist} textAlign={'center'} sx={{ mb: 2 }}>Enter Credits Of a Semester</Typography>
 

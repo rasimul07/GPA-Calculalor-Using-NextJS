@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from "react";
-import { Button, Grid, Typography, Stack, Card } from "@mui/material";
+import { Button, Grid, Typography, Stack, Card, Divider } from "@mui/material";
 import { Box } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import { Mauntain_Mist, Corn, Cafe_Royale } from "../Colors";
@@ -10,7 +10,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from '@mui/material/DialogContent';
 import "../responsiveImage.css";
-import { AppTextField, AppSelect } from "./common";
+import { AppTextField, AppSelect, ProfileDataButton } from "./common";
 import { sgpaToPercentage, calculateOverallPercentageFromCredits } from "../utils/profileGpaUtils";
 
 const FindPercentage = () => {
@@ -119,6 +119,16 @@ const CreditPointToPercentage = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [percentage, setPercentage] = useState(null);
 
+  const handleProfileLoaded = (data) => {
+    const credits = data.credits || [];
+    const count = credits.length / 2;
+    setNumOfSemester(count);
+    setArrayOfSems(new Array(count).fill().map((_, index) => index + 1));
+    setCreditValues([...credits]);
+    setIsVisited(new Array(count * 2).fill(false));
+    setFormSubmitted(false);
+  };
+
   const handleChange = (e) => {
     const curr = e.target.value;
     setNumOfSemester(curr);
@@ -172,6 +182,11 @@ const CreditPointToPercentage = () => {
 
   return (
     <Box>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center" justifyContent="center" sx={{ mb: 2 }}>
+        <ProfileDataButton onLoaded={handleProfileLoaded} />
+        <DialogBox inline />
+      </Stack>
+      <Divider sx={{ mb: 2 }} />
       <CustomFormControl numOfSemester={numOfSemester} handleChange={handleChange}></CustomFormControl>
       <Box>
         <Grid container spacing={2} id='sgpa_to_percentage_form'>
@@ -257,6 +272,18 @@ const SgpaToPercentage = () => {
   const [percentage, setPercentage] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
 
+  const handleProfileLoaded = (data) => {
+    const semesters = data.breakdown?.semesters || [];
+    if (!semesters.length) return;
+    const count = semesters.length;
+    setNumOfSemester(count);
+    setArrayOfSems(semesters.map((row) => row.semester));
+    setSemValues(semesters.map((row) => row.sgpa));
+    setCheckedBeforeSubmit(new Array(count).fill(true));
+    setIsVisited(new Array(count).fill(false));
+    setFormSubmitted(false);
+  };
+
   const handleChange = (event) => {
     const curr = event.target.value;
     setNumOfSemester(curr);
@@ -312,6 +339,10 @@ const SgpaToPercentage = () => {
 
   return (
     <Box>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center" justifyContent="center" sx={{ mb: 2 }}>
+        <ProfileDataButton onLoaded={handleProfileLoaded} />
+      </Stack>
+      <Divider sx={{ mb: 2 }} />
       <CustomFormControl numOfSemester={numOfSemester} handleChange={handleChange}></CustomFormControl>
       <Box>
         <Grid container spacing={2}>
@@ -355,6 +386,18 @@ const YgpaToPercentage = () => {
   const [checkedBeforeSubmit, setCheckedBeforeSubmit] = useState([true]);
   const [percentage, setPercentage] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
+
+  const handleProfileLoaded = (data) => {
+    const years = data.breakdown?.years || [];
+    if (!years.length) return;
+    const count = years.length;
+    setNumOfYear(count);
+    setArrayOfYears(years.map((row) => row.year));
+    setYearValues(years.map((row) => row.ygpa));
+    setIsVisited(new Array(count).fill(false));
+    setCheckedBeforeSubmit(new Array(count).fill(true));
+    setFormSubmitted(false);
+  };
 
   const handleChange = (event) => {
     const curr = event.target.value;
@@ -419,6 +462,10 @@ const YgpaToPercentage = () => {
 
   return (
     <Box>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center" justifyContent="center" sx={{ mb: 2 }}>
+        <ProfileDataButton onLoaded={handleProfileLoaded} />
+      </Stack>
+      <Divider sx={{ mb: 2 }} />
       <CustomFormControl
         numOfSemester={numOfYear}
         handleChange={handleChange}

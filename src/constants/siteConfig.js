@@ -107,7 +107,7 @@ export const paymentConfig = {
 export const gpaStoreFeatures = [
   'Store semester credit points permanently',
   'View SGPA, YGPA, DGPA, CGPA, and percentage at a glance',
-  'Use saved profile data in YGPA and DGPA calculators',
+  'Use saved profile data in SGPA, YGPA, DGPA, and percentage calculators',
   'Access your dashboard from any device',
 ];
 

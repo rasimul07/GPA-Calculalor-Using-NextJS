@@ -71,6 +71,22 @@ export function DGPAProvider({ children }) {
     setDgpa("");
   }, []);
 
+  const loadFromProfile = useCallback(({ credits, isLateralEntry: lateral, breakdown }) => {
+    const safeCredits = credits || [];
+    const courseYears = breakdown?.courseYears ?? Math.max(1, Math.ceil(safeCredits.length / 4));
+    const lateralEntry = Boolean(lateral);
+    const needed = getCreditArrayLength(courseYears, lateralEntry);
+
+    setCourseYearsState(courseYears);
+    setIsLateralEntryState(lateralEntry);
+
+    const padded = [...safeCredits];
+    while (padded.length < needed) padded.push("");
+    setCreditValues(padded.slice(0, needed));
+    setYgpas([]);
+    setDgpa("");
+  }, []);
+
   return (
     <DGPAContext.Provider
       value={{
@@ -88,6 +104,7 @@ export function DGPAProvider({ children }) {
         computeAndStoreYgpas,
         computeAndStoreDgpa,
         resetAll,
+        loadFromProfile,
       }}
     >
       {children}

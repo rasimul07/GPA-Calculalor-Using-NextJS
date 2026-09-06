@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from "react";
-import { Typography, Box, Alert } from "@mui/material";
+import { Typography, Box, Alert, Stack } from "@mui/material";
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
@@ -12,6 +12,7 @@ import Step2 from './steps/Step2';
 import Step3 from './steps/Step3';
 import { DGPAProvider, useDGPA } from '../../context/dgpaContext.jsx';
 import { validateCredits } from '../../utils/gpaCalculations';
+import { ProfileDataButton } from '../common';
 
 const steps = [
     {
@@ -37,6 +38,7 @@ const FindDgpaWizard = () => {
         computeAndStoreDgpa,
         resetAll,
         dgpa,
+        loadFromProfile,
     } = useDGPA();
 
     const continueButtonRef = React.useRef(null);
@@ -96,48 +98,54 @@ const FindDgpaWizard = () => {
         setActiveStep(0);
     };
 
-    return (
-        <Box sx={{ position: 'relative', minHeight: '100vh' }}>
-            <Box
-                aria-hidden
-                sx={{
-                    position: 'fixed',
-                    top: { xs: 56, sm: 64 },
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    zIndex: 0,
-                    backgroundImage:
-                        'url(https://images.unsplash.com/photo-1472289065668-ce650ac443d2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80)',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center center',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundAttachment: 'fixed',
-                }}
-            />
-            <Box sx={{ position: 'relative', zIndex: 1 }}>
-                <Typography
-                    textAlign="center"
-                    variant="h4"
-                    className="calc-page-title"
-                    color="white"
-                    fontWeight="bold"
-                    padding={1}
-                    sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)', fontSize: { xs: '1.35rem', sm: '1.75rem', md: '2rem' } }}
-                >
-                    Find DGPA
-                </Typography>
+    const handleProfileLoaded = (data) => {
+        setStepError("");
+        loadFromProfile(data);
+        setActiveStep(1);
+    };
 
-                <Box
-                    className="form-card page-shell"
-                    sx={{
-                        maxWidth: activeStep === 1 ? 800 : 520,
-                        margin: { xs: '0.75rem auto', sm: '1.5rem auto' },
-                        mt: 2,
-                        mb: 4,
-                        transition: 'max-width 0.3s ease',
-                    }}
-                >
+    return (
+        <Box
+            sx={{
+                backgroundImage:
+                    'url(https://images.unsplash.com/photo-1472289065668-ce650ac443d2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center center',
+                minHeight: '100vh',
+            }}
+        >
+            <Typography
+                textAlign="center"
+                variant="h4"
+                className="calc-page-title"
+                color="white"
+                fontWeight="bold"
+                padding={1}
+                sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)', fontSize: { xs: '1.35rem', sm: '1.75rem', md: '2rem' } }}
+            >
+                Find DGPA
+            </Typography>
+
+            <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                spacing={2}
+                alignItems="center"
+                justifyContent="center"
+                sx={{ px: 2, mb: 1 }}
+            >
+                <ProfileDataButton onLoaded={handleProfileLoaded} onError={setStepError} />
+            </Stack>
+
+            <Box
+                className="form-card page-shell"
+                sx={{
+                    maxWidth: activeStep === 1 ? 800 : 520,
+                    margin: { xs: '0.75rem auto', sm: '1.5rem auto' },
+                    mt: 2,
+                    mb: 4,
+                    transition: 'max-width 0.3s ease',
+                }}
+            >
                     <Stepper activeStep={activeStep} orientation="vertical">
                         {steps.map((step, index) => (
                             <Step key={step.label}>
@@ -200,7 +208,6 @@ const FindDgpaWizard = () => {
                         </Paper>
                     )}
                 </Box>
-            </Box>
         </Box>
     );
 };
